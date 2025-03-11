@@ -1,5 +1,6 @@
 <?php
 session_start();
+include 'dbconfig.php';
 
 // Função para criptografar o nome do arquivo
 function encryptFileName($fileName) {
@@ -41,13 +42,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
 
     if (isValidFile($file)) {
         $encryptedFileName = encryptFileName($file['name']) . '.docx';
-        $uploadDir = 'uploads/';
+        $uploadDir = '../uploads/';
         $uploadFilePath = $uploadDir . $encryptedFileName;
 
         if (move_uploaded_file($file['tmp_name'], $uploadFilePath)) {
             $_SESSION['uploadFilePath'] = $uploadFilePath;
             $_SESSION['originalFileName'] = $file['name'];
-            echo "Arquivo enviado com sucesso!";
+
+            // Verificar se o Usuario_ID está na sessão
+            if (isset($_SESSION['Usuario_ID'])) {
+                $usuario_id = $_SESSION['Usuario_ID'];
+            } else {
+                echo "Erro: Usuário não está logado.";
+                exit;
+            }
+
+            // Inserir dados no banco de dados
+            $stmt = $conn->prepare("INSERT INTO Uploads (Nome_Arquivo, Caminho_Arquivo, Tamanho, Validacao, Usuario_ID) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssisi", $file['name'], $uploadFilePath, $file['size'], $validacao, $usuario_id);
+
+            // Definir valores para $validacao
+            $validacao = 'pendente'; // Exemplo de valor
+
+            if ($stmt->execute()) {
+                echo "Arquivo enviado e registrado com sucesso!";
+            } else {
+                echo "Erro ao registrar o arquivo no banco de dados.";
+            }
+
+            $stmt->close();
         } else {
             echo "Erro ao enviar o arquivo.";
         }
