@@ -49,17 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
             $_SESSION['uploadFilePath'] = $uploadFilePath;
             $_SESSION['originalFileName'] = $file['name'];
 
-            // Verificar se o Usuario_ID está na sessão
-            if (isset($_SESSION['Usuario_ID'])) {
-                $usuario_id = $_SESSION['Usuario_ID'];
-            } else {
-                echo "Erro: Usuário não está logado.";
-                exit;
-            }
-
             // Inserir dados no banco de dados
-            $stmt = $conn->prepare("INSERT INTO Uploads (Nome_Arquivo, Caminho_Arquivo, Tamanho, Validacao, Usuario_ID) VALUES (?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssisi", $file['name'], $uploadFilePath, $file['size'], $validacao, $usuario_id);
+            $stmt = $conn->prepare("INSERT INTO Uploads (Nome_Arquivo, Caminho_Arquivo, Tamanho, Validacao) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssis", $file['name'], $uploadFilePath, $file['size'], $validacao);
 
             // Definir valores para $validacao
             $validacao = 'pendente'; // Exemplo de valor
@@ -102,7 +94,7 @@ if (isset($_GET['download']) && isset($_SESSION['uploadFilePath'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <title>Upload de Arquivo</title>
