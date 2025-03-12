@@ -1,6 +1,14 @@
 <?php
 session_start();
 include 'dbconfig.php';
+require '../../vendor/autoload.php'; // Inclua o autoload do Composer
+
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Settings;
+
+// Configure PhpWord para usar DomPDF
+Settings::setPdfRendererName(Settings::PDF_RENDERER_DOMPDF);
+Settings::setPdfRendererPath('../../vendor/dompdf/dompdf');
 
 // Função para criptografar o nome do arquivo
 function encryptFileName($fileName) {
@@ -73,21 +81,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file']) && isset($_PO
     }
 }
 
-// Função para baixar o arquivo com o nome alterado
+// Função para baixar o arquivo como PDF com o nome alterado
 if (isset($_GET['download']) && isset($_SESSION['uploadFilePath'])) {
     $filePath = $_SESSION['uploadFilePath'];
     $projectTitle = $_SESSION['projectTitle'];
-    $newFileName = $projectTitle . '.docx';
+    $newFileName = $projectTitle . '.pdf';
 
     if (file_exists($filePath)) {
+        $phpWord = IOFactory::load($filePath, 'Word2007');
+        $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
+
         header('Content-Description: File Transfer');
-        header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        header('Content-Type: application/pdf');
         header('Content-Disposition: attachment; filename="' . $newFileName . '"');
         header('Expires: 0');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
         header('Content-Length: ' . filesize($filePath));
-        readfile($filePath);
+        
+        $pdfWriter->save('php://output');
         exit;
     } else {
         $_SESSION['message'] = "Arquivo não encontrado.";
