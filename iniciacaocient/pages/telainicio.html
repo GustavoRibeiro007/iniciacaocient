@@ -1,0 +1,114 @@
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barra de Cabeçalho</title>
+  <link rel="stylesheet" href="telainicio.css">
+</head>
+<body>
+  <!-- Barra com o logo da Fatec e CPS -->
+  <div style="text-align:left; margin-top: 30px; margin: 30px; width: 1000px;">
+    <img src="https://bkpsitecpsnew.blob.core.windows.net/uploadsitecps/sites/53/2024/03/logo-fatec_itapira.png" alt="Imagem final do formulário" style="max-width: 35%; height: auto;">
+  </div>
+  
+  <!-- Barra de Navegação e Busca -->
+  <div class="navbar">
+    <a href="">Home</a>
+    <a href="">Inscrições</a>
+    <a href=""></a>
+    <a href=""></a>
+    <a href=""></a>
+    <a href=""></a>
+  </div>
+<br>
+  
+    <div class="section-title">Projeto integrador</div>
+ 
+        <form action="sucess.html">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>FORMULÁRIO DE INSCRIÇÃO - P.I</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <label for="nome">Nome do grupo:</label>
+                            <input type="text" id="nome" name="nome" value=""
+                            placeholder="Digite o nome do seu grupo..."><br>
+                            <label for="num-participantes">Selecione o número de participantes (máximo 6):</label>
+                            <select id="num-participantes" onchange="mostrarCampos()">
+                            <option value="0">Selecione</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            </select>
+                            <div id="participant-fields" class="participant-form"></div>
+                            <label for="tipo-curso">Curso</label>
+                            <select name="tipo-curso" id="tipo-curso">
+                            <option value="disabled selected">Selecione...</option>
+                            <option value="gestao_producao">Gestão da Produção Industrial</option>
+                            <option value="gestao_empresarial">Gestão Empresarial</option>
+                            <option value="desenvolvimento_soft">Desenvolvimento de Software Multiplataforma</option>
+                            </select>
+                            <label for="semestre">Semestre:</label>
+                            <select name="semestre" id="semestre">
+                            <option value="0">Selecione</option>
+                            <option value="1">1º Semestre</option>
+                            <option value="2">2º Semestre</option>
+                            <option value="3">3º Semestre</option>
+                            <option value="4">4º Semestre</option>
+                            <option value="5">5º Semestre</option>
+                            <option value="6">6º Semestre</option>
+                            </select>
+                            <label for="nome">Orientador do projeto:</label>
+                            <input type="text" id="orientador" name="orientador" value=""
+                            placeholder="Digite o nome do orientador do projeto..."><br>
+                            <label for="TituloP">Título do seu projeto:</label>
+                            <input type="text" id="TituloP" name="TituloP"
+                                placeholder="Digite o título do seu projeto..."><br>
+                            <div class="form-group">
+                                <label for="descricao">Descrição do projeto:</label>
+                                <textarea id="descricao" name="descricao"
+                                    placeholder="Descreva as metas do seu projeto..."></textarea>
+                            </div>
+                            <label for="proposta">Anexar Proposta de Projeto (docx):</label>
+                            <input type="file" id="proposta" name="proposta" accept=".pdf">
+                            <label class="checkbox">
+                                <br>
+                            <label for="link">Anexar Link Github:</label>
+                            <input type="url" id="link" name="link" placeholder="Digite ou cole o link aqui" required><br>
+                            <input type="checkbox" name="aceitar_regras" required>
+                                Confirmo que li as obrigações para o P.I.
+                            </label>
+                            <label class="checkbox">
+                                <br>
+                                <input type="checkbox" name="aceitar_termos" required>
+                                Aceito os termos e condições.
+                            </label> <br>
+                            <button type="submit" class="submit-btn">Enviar Inscrição</button>
+                            <div style="text-align: center; margin-top: 20px;">
+                            
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <script src="script.js"></script>
+    <script src="dados.js"></script>
+
+  <!-- Barra preta -->
+  <div class="container10">
+    <a href="https://www.saopaulo.sp.gov.br/">
+      <img src="https://fatecitapira.cps.sp.gov.br/wp-content/themes/tema-cps/images/sao-paulo/logo-rodape-governo-do-estado-sp.png" alt="Imagem Centralizada" class="centralizada">
+    </a>
+  </div>
+
+</body>
+</html>
