@@ -45,6 +45,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file']) && isset($_PO
     $file = $_FILES['file'];
     $projectTitle = trim($_POST['projectTitle']);
 
+    if (!isValidFile($file)) {
+        $_SESSION['message'] = "Erro: Apenas arquivos .docx com no máximo 5 MB são permitidos.";
+        header("Location: form.php"); 
+        exit;
+    }
+
     if (isValidFile($file) && !empty($projectTitle)) {
         $encryptedFileName = encryptFileName($file['name']) . '.docx';
         $uploadDir = '../uploads/';
