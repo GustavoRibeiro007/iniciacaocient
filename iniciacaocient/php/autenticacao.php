@@ -41,7 +41,6 @@ function extractTextFromDocx($filePath) {
     return $text;
 }
 
-// Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file']) && isset($_POST['projectTitle'])) {
     $file = $_FILES['file'];
     $projectTitle = trim($_POST['projectTitle']);
@@ -61,18 +60,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file']) && isset($_PO
             $stmt = $conn->prepare("INSERT INTO Uploads (Nome_Arquivo, Caminho_Arquivo, Tamanho, Validacao) VALUES (?, ?, ?, ?)");
             $stmt->bind_param("ssis", $encryptedFileName, $uploadFilePath, $file['size'], $validacao);
 
-            // Definir valores para $validacao
-            $validacao = 'pendente'; // Exemplo de valor
+            $validacao = 'pendente'; // Status inicial
 
             if ($stmt->execute()) {
                 $_SESSION['message'] = "Arquivo enviado e registrado com sucesso!";
+                header("Location: sucess.php");
+                exit;
             } else {
                 $_SESSION['message'] = "Erro ao registrar o arquivo no banco de dados.";
             }
 
             $stmt->close();
-            header("Location: " . $_SERVER['PHP_SELF']);
-            exit;
         } else {
             $_SESSION['message'] = "Erro ao enviar o arquivo.";
         }
@@ -81,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file']) && isset($_PO
     }
 }
 
-// Função para baixar o arquivo como PDF com o nome alterado
+// Função para baixar o arquivo como PDF com o nome do projeto
 if (isset($_GET['download']) && isset($_SESSION['uploadFilePath'])) {
     $filePath = $_SESSION['uploadFilePath'];
     $projectTitle = $_SESSION['projectTitle'];
@@ -91,13 +89,13 @@ if (isset($_GET['download']) && isset($_SESSION['uploadFilePath'])) {
         $phpWord = IOFactory::load($filePath, 'Word2007');
         $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
 
+        // Cabeçalhos para forçar o download do PDF
         header('Content-Description: File Transfer');
         header('Content-Type: application/pdf');
         header('Content-Disposition: attachment; filename="' . $newFileName . '"');
         header('Expires: 0');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
-        header('Content-Length: ' . filesize($filePath));
         
         $pdfWriter->save('php://output');
         exit;
@@ -105,36 +103,30 @@ if (isset($_GET['download']) && isset($_SESSION['uploadFilePath'])) {
         $_SESSION['message'] = "Arquivo não encontrado.";
     }
 }
-?>
 
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Upload de Arquivo</title>
-</head>
-<body>
-    <?php if (isset($_SESSION['message'])): ?>
-        <p><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></p>
-    <?php endif; ?>
+// Função para visualizar o arquivo como PDF no navegador
+if (isset($_GET['view']) && isset($_SESSION['uploadFilePath'])) {
+    $filePath = $_SESSION['uploadFilePath'];
+    $projectTitle = $_SESSION['projectTitle'];
+    $newFileName = $projectTitle . '.pdf';
 
-    <form action="" method="post" enctype="multipart/form-data">
-        <label for="file">Escolha um arquivo .docx (máximo 5 MB):</label>
-        <input type="file" name="file" id="file" required>
-        <br>
-        <label for="projectTitle">Nome do Projeto:</label>
-        <input type="text" name="projectTitle" id="projectTitle" required>
-        <br>
-        <button type="submit">Enviar</button>
-    </form>
+    if (file_exists($filePath)) {
+        $phpWord = IOFactory::load($filePath, 'Word2007');
+        $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
 
-    <?php if (isset($_SESSION['fileUploaded']) && $_SESSION['fileUploaded']): ?>
-        <h2>Arquivo Enviado</h2>
-        <p><strong>Nome do Projeto:</strong> <?php echo $_SESSION['projectTitle']; ?></p>
-        <p><strong>Conteúdo do Arquivo:</strong></p>
-        <pre><?php echo extractTextFromDocx($_SESSION['uploadFilePath']); ?></pre>
-        <a href="?download=true">Baixar Arquivo</a>
-        <?php unset($_SESSION['fileUploaded']); ?>
-    <?php endif; ?>
-</body>
-</html>
+        // Cabeçalhos para exibir o PDF no navegador
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="' . $newFileName . '"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        
+        $pdfWriter->save('php://output');
+        exit;
+    } else {
+        $_SESSION['message'] = "Arquivo não encontrado.";
+        header("Location: sucess.php");
+        exit;
+    }
+}
+?>/

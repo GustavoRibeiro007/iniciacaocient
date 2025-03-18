@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="form.css">
+    <link rel="stylesheet" href="../css/form.css">
     <title>Inscrição de Projeto Interdisciplinar - P.I</title>
     
     <section class="govsp-topo"> 
@@ -121,90 +121,35 @@
         <a href="">Feedback do Projeto</a>
     </div>
     
-    <script>
-        function mostrarParticipantes() {
-            const quantidade = document.getElementById("quantParticipantes").value;
-            let participantesDiv = document.getElementById("participantes");
-            participantesDiv.innerHTML = ""; // Limpa os campos existentes
-
-            // Cria campos de participante de acordo com a quantidade selecionada
-            for (let i = 1; i <= quantidade; i++) {
-                participantesDiv.innerHTML += `
-                    <label for="participanteNome${i}">Participante ${i} (Nome e RA):</label><br>
-                    <input type="text" id="participanteNome${i}" name="participanteNome${i}" placeholder="Nome" required><br>
-                    <input type="text" id="participanteRA${i}" name="participanteRA${i}" placeholder="RA" required><br><br>
-                `;
-            }
-        }
-
-        function mostrarGitHub() {
-            const githubDiv = document.getElementById("github");
-            const alunoTI = document.getElementById("alunoTI").checked;
-
-            if (alunoTI) {
-                githubDiv.style.display = "block";
-            } else {
-                githubDiv.style.display = "none";
-            }
-        }
-    </script>
+    <script src="../js/show.js"></script>
 </head>
 <body>
 
     <h1>Inscrição de Projeto Interdisciplinar - P.I</h1>
-    <form action="processar_formulario.php" method="POST" enctype="multipart/form-data">
+    <form action="../php/autenticacao.php" method="POST" enctype="multipart/form-data">
+        <label for="projectTitle">Nome do Projeto:</label>
+            <input type="text" name="projectTitle" id="projectTitle" required>
+            <br>
+            <label for="file">Escolha um arquivo .docx (máximo 5 MB):</label>
+            <input type="file" name="file" id="file" required>
+            <br>
 
-        <label for="equipe">Nome da equipe:</label><br>
-        <input type="text" id="equipe" name="equipe" required placeholder="Digite o nome da equipe..."><br><br>
+            <button type="submit">Enviar</button>
 
-        <label>Quantidade de participantes:</label><br>
-        <input type="number" id="quantParticipantes" name="quantParticipantes" min="2" max="6" required 
-        onchange="mostrarParticipantes()"><br><br>
-
-        <div id="participantes"></div>
-
-        <label for="tipo-curso">Curso:</label><br>
-        <select name="tipo-curso" id="tipo-curso">
-            <option value="disabled selected">Selecione...</option>
-            <option value="gestao_producao">Gestão da Produção Industrial</option>
-            <option value="gestao_empresarial">Gestão Empresarial</option>
-            <option value="desenvolvimento_soft">Desenvolvimento de Software Multiplataforma</option>
-        </select><br><br>
-
-        <label for="semestre">Semestre:</label><br>
-        <select name="semestre" id="semestre">
-            <option value="0">Selecione</option>
-            <option value="1">1º Semestre</option>
-            <option value="2">2º Semestre</option>
-            <option value="3">3º Semestre</option>
-            <option value="4">4º Semestre</option>
-            <option value="5">5º Semestre</option>
-            <option value="6">6º Semestre</option>
-        </select><br><br>
-
-        <label for="orientador">Orientador do projeto:</label><br>
-        <input type="text" id="orientador" name="orientador" required><br><br>
-
-        <label for="resumo">Resumo do projeto:</label><br>
-        <textarea id="resumo" name="resumo" rows="4" cols="50" required></textarea><br><br>
-
-        <label for="upload">Upload de arquivos (.docx):</label><br>
-        <input type="file" id="upload" name="upload" accept=".docx" required><br><br>
-
-        <label for="alunoTI">Aluno de T.I:</label>
-        <input type="checkbox" id="alunoTI" class="alunoTI" onclick="mostrarGitHub()"><br><br>
-
-        <div id="github" style="display:none;">
-            <label for="githubLink">GitHub:</label><br>
-            <input type="url" id="githubLink" name="githubLink" placeholder="Link do GitHub"><br><br>
-        </div>
-
-        <button type="submit">Enviar</button>
+    
+        <?php if (isset($_SESSION['fileUploaded']) && $_SESSION['fileUploaded']): ?>
+            <h2>Arquivo Enviado</h2>
+            <p><strong>Nome do Projeto:</strong> <?php echo $_SESSION['projectTitle']; ?></p>
+            <p><strong>Conteúdo do Arquivo:</strong></p>
+            <pre><?php echo extractTextFromDocx($_SESSION['uploadFilePath']); ?></pre>
+            <a href="?download=true">Baixar Arquivo</a>
+            <?php unset($_SESSION['fileUploaded']); ?>
+        <?php endif; ?>
         
         <footer>
             <p>&copy; 2025 Fatec Itapira - Todos os direitos reservados.</p>
         </footer>
-        
+        </form>
     </form>
 
 </body>

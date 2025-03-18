@@ -8,11 +8,10 @@
 /* Estilo do body */
 body {
     background: linear-gradient(to right, #ffffff, #d3d3d3);
-    background-color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    min-height: 100vh; /* Garante que o layout ocupe toda a altura da tela */
     padding: 20px;
     text-align: center;
 }
@@ -25,6 +24,7 @@ body {
     width: 100%;
     max-width: 400px;
     padding: 40px;
+    overflow: hidden; /* Evita que o conteúdo ultrapasse os limites do container */
 }
 
 /* Estilo da mensagem */
@@ -43,12 +43,15 @@ body {
     font-weight: 600;
     color: darkred;
     margin-bottom: 10px;
+    word-wrap: break-word; /* Evita quebra de layout com textos longos */
 }
 
 .message p {
     font-size: 16px;
     color: #333;
     margin-bottom: 20px;
+    line-height: 1.5;
+    word-wrap: break-word; /* Evita quebra de layout com textos longos */
 }
 
 .message a {
@@ -58,12 +61,34 @@ body {
     border: 2px solid rgb(110, 0, 0);
     padding: 10px 20px;
     border-radius: 8px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
+    display: inline-block;
+    margin: 5px;
 }
 
 .message a:hover {
     background-color: darkred;
     color: rgb(245, 245, 245);
+    transform: scale(1.05); /* Adiciona um leve efeito de zoom ao passar o mouse */
+}
+.pdf-viewer {
+    margin-top: 20px;
+    width: 100%;
+    height: 500px;
+    border: 1px solid #ccc;
+}
+
+.view-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.view-btn:hover {
+    background-color: #45a049;
 }
 
 /* Responsividade */
@@ -83,5 +108,6 @@ body {
 
     .message a {
         font-size: 14px;
+        padding: 8px 15px;
     }
 }
