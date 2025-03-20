@@ -121,7 +121,6 @@
         <a href="">Feedback do Projeto</a>
     </div>
     
-    <script src="../js/show.js"></script>
 </head>
 <body>
 
@@ -136,15 +135,34 @@
 
             <button type="submit">Enviar</button>
 
-    
-        <?php if (isset($_SESSION['fileUploaded']) && $_SESSION['fileUploaded']): ?>
-            <h2>Arquivo Enviado</h2>
-            <p><strong>Nome do Projeto:</strong> <?php echo $_SESSION['projectTitle']; ?></p>
-            <p><strong>Conteúdo do Arquivo:</strong></p>
-            <pre><?php echo extractTextFromDocx($_SESSION['uploadFilePath']); ?></pre>
-            <a href="?download=true">Baixar Arquivo</a>
-            <?php unset($_SESSION['fileUploaded']); ?>
-        <?php endif; ?>
+        <script>
+                document.getElementById('file').addEventListener('change', function () {
+                    const fileInput = this;
+                    const file = fileInput.files[0];
+                    const allowedType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                    const maxSize = 5 * 1024 * 1024; // 5 MB
+
+                if (!file) {
+                    alert('Por favor, selecione um arquivo.');
+                    fileInput.value = ''; 
+                    return;
+                }
+
+                if (file.type !== allowedType) {
+                    alert('Erro: Apenas arquivos .docx são permitidos.');
+                    fileInput.value = ''; 
+                    return;
+                }
+
+                if (file.size > maxSize) {
+                    alert('Erro: O arquivo excede o tamanho máximo de 5 MB.');
+                    fileInput.value = ''; 
+                    return;
+                }
+
+                alert('Upload de arquivo feito com sucesso!');
+            });
+        </script>
         
         <footer>
             <p>&copy; 2025 Fatec Itapira - Todos os direitos reservados.</p>
