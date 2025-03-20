@@ -117,18 +117,32 @@ if (isset($_GET['view']) && isset($_SESSION['uploadFilePath'])) {
     $newFileName = $projectTitle . '.pdf';
 
     if (file_exists($filePath)) {
-        $phpWord = IOFactory::load($filePath, 'Word2007');
-        $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
+        try {
+            $phpWord = IOFactory::load($filePath, 'Word2007');
+            $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
 
-        // Cabeçalhos para exibir o PDF no navegador
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: inline; filename="' . $newFileName . '"');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        
-        $pdfWriter->save('php://output');
-        exit;
+            // Limpa o buffer de saída antes de enviar os cabeçalhos
+            if (ob_get_length()) {
+                ob_end_clean();
+            }
+
+            // Cabeçalhos para exibir o PDF no navegador
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: inline; filename="' . $newFileName . '"');
+            header('Expires: 0');
+            header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+            header('Pragma: no-cache');
+
+            // Salva o PDF no navegador
+            $pdfWriter->save('php://output');
+            exit;
+        } catch (Exception $e) {
+            // Log de erro para depuração
+            error_log("Erro ao gerar o PDF: " . $e->getMessage());
+            $_SESSION['message'] = "Erro ao gerar o PDF.";
+            header("Location: sucess.php");
+            exit;
+        }
     } else {
         $_SESSION['message'] = "Arquivo não encontrado.";
         header("Location: sucess.php");
