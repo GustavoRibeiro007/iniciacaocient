@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/form.css">
+    <link rel="stylesheet" href="css/form.css">
     <title>Inscrição de Projeto Interdisciplinar - P.I</title>
     
     <section class="govsp-topo"> 
@@ -125,7 +125,7 @@
 <body>
 
     <h1>Inscrição de Projeto Interdisciplinar - P.I</h1>
-    <form action="../php/autenticacao.php" method="POST" enctype="multipart/form-data">
+    <form action="php/autenticacao.php" method="POST" enctype="multipart/form-data">
         <label for="projectTitle">Nome do Projeto:</label>
             <input type="text" name="projectTitle" id="projectTitle" required>
             <br>

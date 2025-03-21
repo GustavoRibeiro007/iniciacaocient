@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file']) && isset($_PO
 
     if (!isValidFile($file)) {
         $_SESSION['message'] = "Erro: Apenas arquivos .docx com no máximo 5 MB são permitidos.";
-        header("Location: form.php"); 
+        header("Location: ../index.php"); 
         exit;
     }
 
@@ -118,22 +118,23 @@ if (isset($_GET['view']) && isset($_SESSION['uploadFilePath'])) {
 
     if (file_exists($filePath)) {
         try {
+            // Carrega o arquivo Word
             $phpWord = IOFactory::load($filePath, 'Word2007');
             $pdfWriter = IOFactory::createWriter($phpWord, 'PDF');
 
-            // Limpa o buffer de saída antes de enviar os cabeçalhos
-            if (ob_get_length()) {
+            // Limpa todos os buffers de saída para evitar conflitos
+            while (ob_get_level()) {
                 ob_end_clean();
             }
 
-            // Cabeçalhos para exibir o PDF no navegador
+            // Define os cabeçalhos para exibir o PDF no navegador
             header('Content-Type: application/pdf');
             header('Content-Disposition: inline; filename="' . $newFileName . '"');
             header('Expires: 0');
-            header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-            header('Pragma: no-cache');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Pragma: public');
 
-            // Salva o PDF no navegador
+            // Salva o PDF diretamente no fluxo de saída
             $pdfWriter->save('php://output');
             exit;
         } catch (Exception $e) {
