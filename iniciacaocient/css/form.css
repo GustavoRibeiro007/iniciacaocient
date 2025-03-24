@@ -6,9 +6,11 @@
   font-family: Arial, sans-serif;
 }
 
-.body {
+body {
   background: linear-gradient(to right, white, gray);
   background-color: aliceblue;
+  background-image: url(../img/seamless-white-interlaced-rounded-arc-patterned-background_53876-97975.avif);
+  background-repeat: repeat; 
 }
 
 /* Contêiner para as imagens e barra de navegação */
