@@ -122,6 +122,41 @@
     </div>
     
 </head>
+
+<script>
+function mostrarParticipantes() {
+    const quantidade = document.getElementById("quantParticipantes").value;
+
+    // Verifica se a quantidade está entre 2 e 6
+    if (quantidade < 2 || quantidade > 6) {
+        alert("Por favor, insira uma quantidade de participantes entre 2 e 6.");
+        document.getElementById("quantParticipantes").value = ""; // Limpa o campo
+        return;
+    }
+
+    let participantesDiv = document.getElementById("participantes");
+    participantesDiv.innerHTML = ""; // Limpa os campos existentes
+
+    // Cria campos de participante de acordo com a quantidade selecionada
+    for (let i = 1; i <= quantidade; i++) {
+        participantesDiv.innerHTML += `
+            <label for="participanteNome${i}">Participante ${i} (Nome e RA):</label><br>
+            <input type="text" id="participanteNome${i}" name="participanteNome${i}" placeholder="Nome" required><br>
+            <input type="text" id="participanteRA${i}" name="participanteRA${i}" placeholder="RA" required><br><br>
+        `;
+    }
+}
+function mostrarGitHub() {
+    const githubDiv = document.getElementById("github");
+    const alunoTI = document.getElementById("alunoTI").checked;
+
+    if (alunoTI) {
+        githubDiv.style.display = "block";
+    } else {
+        githubDiv.style.display = "none";
+    }
+}
+</script>
 <body>
 
     <h1>Inscrição de Projeto Interdisciplinar - P.I</h1>
@@ -129,9 +164,48 @@
         <label for="projectTitle">Nome do Projeto:</label>
             <input type="text" name="projectTitle" id="projectTitle" required>
             <br>
+
+         <label>Quantidade de participantes:</label><br>
+         <input type="number" id="quantParticipantes" name="quantParticipantes" min="2" max="6" required 
+         onchange="mostrarParticipantes()"><br><br>
+ 
+         <div id="participantes"></div>
+ 
+         <label for="tipo-curso">Curso:</label><br>
+         <select name="tipo-curso" id="tipo-curso">
+             <option value="disabled selected">Selecione...</option>
+             <option value="gestao_producao">Gestão da Produção Industrial</option>
+             <option value="gestao_empresarial">Gestão Empresarial</option>
+             <option value="desenvolvimento_soft">Desenvolvimento de Software Multiplataforma</option>
+         </select><br><br>
+ 
+         <label for="semestre">Semestre:</label><br>
+         <select name="semestre" id="semestre">
+             <option value="0">Selecione</option>
+             <option value="1">1º Semestre</option>
+             <option value="2">2º Semestre</option>
+             <option value="3">3º Semestre</option>
+             <option value="4">4º Semestre</option>
+             <option value="5">5º Semestre</option>
+             <option value="6">6º Semestre</option>
+         </select><br><br>
+ 
+         <label for="orientador">Orientador do projeto:</label><br>
+         <input type="text" id="orientador" name="orientador" required><br><br>
+ 
+         <label for="resumo">Resumo do projeto:</label><br>
+         <textarea id="resumo" name="resumo" rows="4" cols="50" required></textarea><br><br>
             <label for="file">Escolha um arquivo .docx (máximo 5 MB):</label>
             <input type="file" name="file" id="file" required>
             <br>
+
+            <label for="alunoTI">Aluno de T.I:</label>
+         <input type="checkbox" id="alunoTI" class="alunoTI" onclick="mostrarGitHub()"><br><br>
+ 
+         <div id="github" style="display:none;">
+             <label for="githubLink">GitHub:</label><br>
+             <input type="url" id="githubLink" name="githubLink" placeholder="Link do GitHub"><br><br>
+         </div>
 
             <button type="submit">Enviar</button>
 
