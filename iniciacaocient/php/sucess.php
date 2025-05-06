@@ -18,12 +18,18 @@ session_start();
             <h1>Formulário Enviado!</h1>
             <p>Seu formulário foi enviado com sucesso.</p>
             <p><strong>Nome do Projeto:</strong> <?php echo htmlspecialchars($_SESSION['projectTitle'], ENT_QUOTES, 'UTF-8'); ?></p>
+            
+            <?php if (isset($_SESSION['file_message'])): ?>
+                <div class="file-info">
+                    <?php echo $_SESSION['file_message']; ?>
+                </div>
+            <?php endif; ?>
+
             <?php if (isset($_SESSION['uploadFilePath']) && file_exists($_SESSION['uploadFilePath'])): ?>
                 <a href="../php/autenticacao.php?view=true" target="_blank" class="view-btn">Visualizar Arquivo</a>
             <?php else: ?>
                 <p>O arquivo PDF não está disponível para visualização.</p>
             <?php endif; ?>
-            <a href="../php/autenticacao.php?download=true" class="download-btn">Baixar Arquivo em PDF</a>
             <a href="../index.php" class="back-btn">Voltar para o formulário</a>
         </div>
     </div>
