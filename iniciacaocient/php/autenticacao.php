@@ -32,7 +32,7 @@ function generatePDF($formData, $filePath) {
 
     // Adicionar participantes
     for ($i = 1; $i <= $formData['quantParticipantes']; $i++) {
-        $html .= "<p><strong>Participante {$i}:</strong> Nome: {$formData["participanteNome{$i}"]}, RA: {$formData["participanteRA{$i}"]}</p>";
+        $html .= "<p><strong>Participante {$i}:</strong> Nome: {$formData["participanteNome{$i}"]}, RA: {$formData["participanteRA{$i}"]}, Email: {$formData["participanteEmail{$i}"]}</p>";
     }
 
     // Adicionar link do GitHub, se disponível
@@ -63,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['projectTitle'])) {
     for ($i = 1; $i <= $formData['quantParticipantes']; $i++) {
         $formData["participanteNome{$i}"] = trim($_POST["participanteNome{$i}"]);
         $formData["participanteRA{$i}"] = trim($_POST["participanteRA{$i}"]);
+        $formData["participanteEmail{$i}"] = trim($_POST["participanteEmail{$i}"]);
     }
 
     // Diretório de uploads
@@ -80,6 +81,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['projectTitle'])) {
         $fileSize = $_FILES['file']['size'];
         $fileType = $_FILES['file']['type'];
         $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+
+        // Mensagem de confirmação do recebimento do arquivo
+        $fileSizeMB = round($fileSize / (1024 * 1024), 2);
+        $mensagem = "<strong>Arquivo recebido com sucesso:</strong><br>";
+        $mensagem .= "<strong>Nome:</strong> " . htmlspecialchars($fileName) . "<br>";
+        $mensagem .= "<strong>Tamanho:</strong> " . $fileSizeMB . " MB<br>";
+        $mensagem .= "<strong>Tipo:</strong> " . htmlspecialchars($fileType);
+        
+        $_SESSION['file_message'] = $mensagem; // Usando uma chave diferente para não conflitar
 
         // Validar tipo e tamanho do arquivo
         $allowedExtensions = ['docx'];
@@ -141,16 +151,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['projectTitle'])) {
     );
 
     if ($stmt->execute()) {
-        $_SESSION['message'] = "Formulário enviado, PDF gerado e arquivo salvo com sucesso!";
+        $formulario_id = $conn->insert_id; // Pega o ID do formulário recém inserido
+        
+        // Inserir participantes na tabela Participantes
+        for ($i = 1; $i <= $formData['quantParticipantes']; $i++) {
+            $nome = $formData["participanteNome{$i}"];
+            $ra = $formData["participanteRA{$i}"];
+            $email = $formData["participanteEmail{$i}"];
+            
+            $stmtPart = $conn->prepare("INSERT INTO Participantes (Formulario_ID, Nome, RA, Email) VALUES (?, ?, ?, ?)");
+            $stmtPart->bind_param("isss", $formulario_id, $nome, $ra, $email);
+            $stmtPart->execute();
+            $stmtPart->close();
+        }
+
         $_SESSION['uploadFilePath'] = $pdfFilePath;
         $_SESSION['projectTitle'] = $formData['projectTitle'];
+        $stmt->close();
         header("Location: sucess.php");
         exit;
     } else {
-        $_SESSION['message'] = "Erro ao registrar o formulário no banco de dados.";
+        $stmt->close();
+        $_SESSION['error'] = "Erro ao registrar o formulário no banco de dados.";
+        header("Location: ../index.php");
+        exit;
     }
-
-    $stmt->close();
 }
 
 
