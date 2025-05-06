@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="css/form.css">
-    <title>Inscrição de Projeto Interdisciplinar - P.I</title>
-    
-    <section class="govsp-topo"> 
+    <title class="falavel">Inscrição de Projeto Interdisciplinar - P.I</title>
+</head>
+
+<section class="govsp-topo"> 
         <link rel="stylesheet" type="text/css" href="https://www.cps.sp.gov.br/wp-content/themes/tema-cps/css/sao-paulo/topo-padrao-govsp.min.css">
         <link rel="stylesheet" type="text/css" href="https://www.cps.sp.gov.br/wp-content/themes/tema-cps/css/sao-paulo/barra-contraste-govsp.min.css">  
         <div id="govsp-topbarGlobal" class="blu-e">
@@ -116,133 +118,200 @@
 
     <!-- Barra de Navegação e Busca -->
     <div class="navbar">
-        <a href="">Home</a>
-        <a href="">Inscrições</a>
-        <a href="">Feedback do Projeto</a>
+        <a href="" class="nav-link falavel"><i class="fas fa-home"></i> Home</a>
+        <a href="" class="nav-link falavel"><i class="fas fa-file-alt"></i> Inscrições</a>
+        <a href="" class="nav-link falavel"><i class="fas fa-comments"></i> Feedback do Projeto</a>
     </div>
     
 </head>
 
-<script>
-function mostrarParticipantes() {
-    const quantidade = document.getElementById("quantParticipantes").value;
 
-    // Verifica se a quantidade está entre 2 e 6
-    if (quantidade < 2 || quantidade > 6) {
-        alert("Por favor, insira uma quantidade de participantes entre 2 e 6.");
-        document.getElementById("quantParticipantes").value = ""; // Limpa o campo
-        return;
-    }
-
-    let participantesDiv = document.getElementById("participantes");
-    participantesDiv.innerHTML = ""; // Limpa os campos existentes
-
-    // Cria campos de participante de acordo com a quantidade selecionada
-    for (let i = 1; i <= quantidade; i++) {
-        participantesDiv.innerHTML += `
-            <label for="participanteNome${i}">Participante ${i} (Nome e RA):</label><br>
-            <input type="text" id="participanteNome${i}" name="participanteNome${i}" placeholder="Nome" required><br>
-            <input type="text" id="participanteRA${i}" name="participanteRA${i}" placeholder="RA" required><br><br>
-        `;
-    }
-}
-function mostrarGitHub() {
-    const githubDiv = document.getElementById("github");
-    const alunoTI = document.getElementById("alunoTI").checked;
-
-    if (alunoTI) {
-        githubDiv.style.display = "block";
-    } else {
-        githubDiv.style.display = "none";
-    }
-}
-</script>
 <body>
 
-    <h1>Inscrição de Projeto Interdisciplinar - P.I</h1>
-    <form action="php/autenticacao.php" method="POST" enctype="multipart/form-data">
-        <label for="projectTitle">Nome do Projeto:</label>
-            <input type="text" name="projectTitle" id="projectTitle" required>
-            <br>
+    <div class="container">
+        <h1 class="falavel">Inscrição de Projeto Interdisciplinar - P.I</h1>
 
-         <label>Quantidade de participantes:</label><br>
-         <input type="number" id="quantParticipantes" name="quantParticipantes" min="2" max="6" required 
-         onchange="mostrarParticipantes()"><br><br>
- 
-         <div id="participantes"></div>
- 
-         <label for="tipo-curso">Curso:</label><br>
-         <select name="tipo-curso" id="tipo-curso">
-             <option value="disabled selected">Selecione...</option>
-             <option value="gestao_producao">Gestão da Produção Industrial</option>
-             <option value="gestao_empresarial">Gestão Empresarial</option>
-             <option value="desenvolvimento_soft">Desenvolvimento de Software Multiplataforma</option>
-         </select><br><br>
- 
-         <label for="semestre">Semestre:</label><br>
-         <select name="semestre" id="semestre">
-             <option value="0">Selecione</option>
-             <option value="1">1º Semestre</option>
-             <option value="2">2º Semestre</option>
-             <option value="3">3º Semestre</option>
-             <option value="4">4º Semestre</option>
-             <option value="5">5º Semestre</option>
-             <option value="6">6º Semestre</option>
-         </select><br><br>
- 
-         <label for="orientador">Orientador do projeto:</label><br>
-         <input type="text" id="orientador" name="orientador" required><br><br>
- 
-         <label for="resumo">Resumo do projeto:</label><br>
-         <textarea id="resumo" name="resumo" rows="4" cols="50" required></textarea><br><br>
-            <label for="file">Escolha um arquivo .docx (máximo 5 MB):</label>
-            <input type="file" name="file" id="file" required>
-            <br>
+        <button id="ativarAudio" class="action-btn">
+            <i class="fas fa-volume-up"></i> Ativar áudio para acessibilidade
+        </button>
 
-            <label for="alunoTI">Aluno de T.I:</label>
-         <input type="checkbox" id="alunoTI" class="alunoTI" onclick="mostrarGitHub()"><br><br>
- 
-         <div id="github" style="display:none;">
-             <label for="githubLink">GitHub:</label><br>
-             <input type="url" id="githubLink" name="githubLink" placeholder="Link do GitHub"><br><br>
-         </div>
+        <form action="php/autenticacao.php" method="POST" enctype="multipart/form-data" class="form-container">
+            <div class="form-group">
+                <label for="projectTitle" class="falavel">Título do Projeto:</label>
+                <input type="text" name="projectTitle" id="projectTitle" required class="form-control">
+            </div>
 
-            <button type="submit">Enviar</button>
+            <div class="form-group">
+                <label for="quantParticipantes" class="falavel">Quantidade de Participantes:</label>
+                <select id="quantParticipantes" name="quantParticipantes" required onchange="mostrarParticipantes()" class="form-control">
+                    <option value="" class="falavel">Selecione</option>
+                    <option value="2" class="falavel">2 Participantes</option>
+                    <option value="3" class="falavel">3 Participantes</option>
+                    <option value="4" class="falavel">4 Participantes</option>
+                    <option value="5" class="falavel">5 Participantes</option>
+                    <option value="6" class="falavel">6 Participantes</option>
+                </select>
+            </div>
 
-        <script>
-                document.getElementById('file').addEventListener('change', function () {
-                    const fileInput = this;
-                    const file = fileInput.files[0];
-                    const allowedType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-                    const maxSize = 5 * 1024 * 1024; // 5 MB
+            <div id="participantes-container" class="participantes-grid"></div>
 
-                if (!file) {
-                    alert('Por favor, selecione um arquivo.');
-                    fileInput.value = ''; 
-                    return;
-                }
+            <div class="form-group">
+                <label for="tipo-curso" class="falavel">Curso:</label>
+                <select name="tipo-curso" id="tipo-curso" class="form-control">
+                    <option class="falavel" value="disabled selected">Selecione...</option>
+                    <option value="gestao_producao" class="falavel">Gestão da Produção Industrial</option>
+                    <option value="gestao_empresarial" class="falavel">Gestão Empresarial</option>
+                    <option value="desenvolvimento_soft" class="falavel">Desenvolvimento de Software Multiplataforma</option>
+                </select>
+            </div>
 
-                if (file.type !== allowedType) {
-                    alert('Erro: Apenas arquivos .docx são permitidos.');
-                    fileInput.value = ''; 
-                    return;
-                }
+            <div class="form-group">
+                <label for="semestre" class="falavel">Semestre:</label>
+                <select name="semestre" id="semestre" class="form-control">
+                    <option value="0" class="falavel">Selecione</option>
+                    <option value="1" class="falavel">1º Semestre</option>
+                    <option value="2" class="falavel">2º Semestre</option>
+                    <option value="3" class="falavel">3º Semestre</option>
+                    <option value="4" class="falavel">4º Semestre</option>
+                    <option value="5" class="falavel">5º Semestre</option>
+                    <option value="6" class="falavel">6º Semestre</option>
+                </select>
+            </div>
 
-                if (file.size > maxSize) {
-                    alert('Erro: O arquivo excede o tamanho máximo de 5 MB.');
-                    fileInput.value = ''; 
-                    return;
-                }
+            <div class="form-group">
+                <label for="orientador" class="falavel">Orientador do projeto:</label>
+                <input type="text" id="orientador" name="orientador" required class="form-control">
+            </div>
 
-                alert('Upload de arquivo feito com sucesso!');
-            });
-        </script>
-        
-        <footer>
+            <div class="form-group">
+                <label for="resumo" class="falavel">Resumo do projeto:</label>
+                <textarea id="resumo" name="resumo" rows="4" cols="50" required class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="file" class="falavel">Escolha um arquivo .docx (máximo 5 MB):</label>
+                <input type="file" name="file" id="file" required class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="repositorio" class="falavel">Link do repositório:</label>
+                <input type="text" name="repositorio" id="repositorio" class="form-control">
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane"></i> Enviar
+            </button>
+            <br><br>
+
+            <footer>
             <p>&copy; 2025 Fatec Itapira - Todos os direitos reservados.</p>
         </footer>
-        </form>
-    </form>
 
+        </form>
+
+        
+    </div>
+
+    <!-- VLibras Plugin -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+    <script>
+        let audioAtivo = false;
+
+        document.getElementById("ativarAudio").addEventListener("click", () => {
+            audioAtivo = true;
+            alert("Áudio ativado! Agora passe o mouse nos textos.");
+        });
+
+        function falar(texto) {
+            if (!audioAtivo) return;
+            const fala = new SpeechSynthesisUtterance(texto);
+            fala.lang = "pt-BR";
+            speechSynthesis.cancel();
+            speechSynthesis.speak(fala);
+        }
+
+        document.querySelectorAll(".falavel").forEach(el => {
+            el.addEventListener("mouseenter", () => {
+                falar(el.textContent);
+            });
+        });
+    </script>
+
+    <script>
+        function mostrarParticipantes() {
+            const qtd = parseInt(document.getElementById("quantParticipantes").value);
+            const container = document.getElementById("participantes-container");
+            container.innerHTML = "";
+
+            if (!qtd || qtd < 2 || qtd > 6) return;
+
+            for (let i = 1; i <= qtd; i++) {
+                const div = document.createElement("div");
+                div.className = "participante";
+                div.style.display = "block";
+
+                div.innerHTML = `
+                    <div class="participante-card">
+                        <h3 class="falavel">Participante ${i}</h3>
+                        <div class="form-group">
+                            <label for="participanteNome${i}" class="falavel">Nome:</label>
+                            <input type="text" id="participanteNome${i}" name="participanteNome${i}" required class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="participanteRA${i}" class="falavel">RA:</label>
+                            <input type="text" id="participanteRA${i}" name="participanteRA${i}" required class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="participanteEmail${i}" class="falavel">E-mail:</label>
+                            <input type="email" id="participanteEmail${i}" name="participanteEmail${i}" required class="form-control">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            }
+        }
+    </script>
+
+    <!-- Validação do arquivo -->
+    <script>
+        document.getElementById('file').addEventListener('change', function () {
+            const fileInput = this;
+            const file = fileInput.files[0];
+            const allowedType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+            const maxSize = 5 * 1024 * 1024; // 5 MB
+
+            if (!file) {
+                alert('Por favor, selecione um arquivo.');
+                fileInput.value = ''; 
+                return;
+            }
+
+            if (file.type !== allowedType) {
+                alert('Erro: Apenas arquivos .docx são permitidos.');
+                fileInput.value = ''; 
+                return;
+            }
+
+            if (file.size > maxSize) {
+                alert('Erro: O arquivo excede o tamanho máximo de 5 MB.');
+                fileInput.value = ''; 
+                return;
+            }
+
+            alert('Upload de arquivo feito com sucesso!');
+        });
+    </script>
 </body>
 </html>
