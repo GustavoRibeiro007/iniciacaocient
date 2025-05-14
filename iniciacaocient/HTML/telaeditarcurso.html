@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="teladm.css" />
+  <script src="telaadm.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+        <div class="imagem-container">
+        <img src="Fatec.png" alt="Logo">
+      </div>
+      <br><br>
+      <nav>
+        <ul>
+          <li class="admin-title">Administrador</li>
+          <li class="has-submenu"><a href="telaadm.html">Início</a></li>
+
+          <li class="has-submenu">Cursos
+            <ul class="submenu">
+              <li><a href="telacurso.html">Cadastrar</a></li>
+              <li><a href="telaeditarcurso.html">Editar</a></li>
+            </ul>
+          </li>
+
+          <li class="has-submenu">Usuário
+            <ul class="submenu">
+              <li><a href="telausuario.html">Cadastrar</a></li>
+              <li><a href="telaeditarusuario.html">Editar</a></li>
+            </ul>
+          </li>
+
+          <li class="has-submenu">Projetos
+            <ul class="submenu">
+              <li><a href="projeto.html">Consultar</a></li>
+              <li><a href="telaagenda.html">Agendar</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Conteúdo principal -->
+    <main class="main">
+      <div class="actions">
+        <div class="box">
+          <h2>Editar Cursos</h2>
+
+          <!-- Filtros -->
+          <div class="filtros">
+            <select id="filtroCategoria">
+              <option value="">Categoria</option>
+              <option value="Tecnologia">Tecnologia</option>
+              <option value="Negócios">Negócios</option>
+            </select>
+
+            <select id="filtroFormato">
+              <option value="">Formato</option>
+              <option value="Presencial">Presencial</option>
+              <option value="Online">Online</option>
+              <option value="Híbrido">Híbrido</option>
+            </select>
+
+            <button onclick="filtrarCursos()">Filtrar</button>
+          </div>
+
+          <!-- Tabela de cursos -->
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Formato</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaCursos">
+              <tr>
+                <td>01</td>
+                <td>Desenvolvimento de Software</td>
+                <td>Tecnologia</td>
+                <td>Presencial</td>
+                <td>
+                  <a href="editarcurso.html">
+                    <button>Editar</button>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
