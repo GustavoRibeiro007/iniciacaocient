@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projetos</title>
+  <link rel="stylesheet" href="teladm.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+  <script src="telausuario.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+        <div class="imagem-container">
+        <img src="Fatec.png" alt="Logo">
+      </div>
+      <br><br>
+      <nav>
+        <ul>
+          <li class="admin-title">Administrador</li>
+          <li class="has-submenu"><a href="telaadm.html">Início</a></li>
+
+          <li class="has-submenu">Cursos
+            <ul class="submenu">
+              <li><a href="telacurso.html">Cadastrar</a></li>
+              <li><a href="telaeditarcurso.html">Editar</a></li>
+            </ul>
+          </li>
+
+          <li class="has-submenu">Usuário
+            <ul class="submenu">
+              <li><a href="telausuario.html">Cadastrar</a></li>
+              <li><a href="telaeditarusuario.html">Editar</a></li>
+            </ul>
+          </li>
+
+          <li class="has-submenu">Projetos
+            <ul class="submenu">
+              <li><a href="projeto.html">Consultar</a></li>
+              <li><a href="telaagenda.html">Agendar</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="actions">
+        <div class="box">
+          <h2>Projetos Cadastrados</h2>
+
+          <div class="filtros">
+            <select id="filtroCurso">
+              <option value="">Curso</option>
+              <option value="DSM">Desenvolvimento de Software</option>
+              <option value="Gestao">Gestão</option>
+            </select>
+
+            <select id="filtroCategoria">
+              <option value="">Status</option>
+              <option value="pendente">Pendente</option>
+              <option value="aprovado">Aprovado</option>
+            </select>
+
+            <button onclick="aplicarFiltros()">Filtrar</button>
+          </div>
+
+          <div class="acoes-exportacao" style="margin-bottom: 15px; display: flex; gap: 10px;">
+            <button onclick="exportarProjetosPDF()">Exportar PDF</button>
+            <button onclick="exportarProjetosCSV()">Exportar Excel (CSV)</button>
+          </div>
+
+          <table id="tabelaProjetos">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Curso</th>
+                <th>Aluno</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+            
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="overlay"></div>
+  <div id="detalhesModal">
+    <h3>Detalhes do Projeto</h3>
+    <p><strong>Título:</strong> <span id="detTitulo"></span></p>
+    <p><strong>Resumo:</strong> <span id="detResumo"></span></p>
+    <p><strong>Aluno:</strong> <span id="detAluno"></span></p>
+    <p><strong>Orientador:</strong> <span id="detOrientador"></span></p>
+    <p><strong>Status:</strong> <span id="detStatus"></span></p>
+    <p><strong>Arquivo:</strong> <a id="detArquivo" href="#" target="_blank">Ver</a></p>
+    <button onclick="fecharModal()">Fechar</button>
+  </div>
+</body>
+</html>
