@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="teladm.css" />
+  <script src="telaadm.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+        <div class="imagem-container">
+        <img src="Fatec.png" alt="Logo">
+      </div>
+      <br><br>
+      <nav>
+        <ul>
+          <li class="admin-title">Administrador</li>
+          <li class="has-submenu"><a href="telaadm.html">Início</a></li>
+
+          <li class="has-submenu">Cursos
+            <ul class="submenu">
+              <li><a href="telacurso.html">Cadastrar</a></li>
+              <li><a href="telaeditarcurso.html">Editar</a></li>
+            </ul>
+          </li>
+
+          <li class="has-submenu">Usuário
+            <ul class="submenu">
+              <li><a href="telausuario.html">Cadastrar</a></li>
+              <li><a href="telaeditarusuario.html">Editar</a></li>
+            </ul>
+          </li>
+
+          <li class="has-submenu">Projetos
+            <ul class="submenu">
+              <li><a href="projeto.html">Consultar</a></li>
+              <li><a href="telaagenda.html">Agendar</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    
+    <main class="main">
+      <div class="actions">
+        <div class="box">
+          <h2>Curso</h2>
+          <form class="form-curso">
+            <label for="codigo">Código do curso: 01</label>
+
+            <label for="nome">Nome do curso:</label>
+            <input type="text" id="nome" name="nome" value="Desenvolvimento de Software" />
+
+            <label for="descricao">Descrição do curso:</label>
+            <input type="text" id="descricao" name="descricao" value="Curso focado em programação e desenvolvimento de sistemas." />
+
+            <label for="categoria">Categoria:</label>
+            <input type="text" id="categoria" name="categoria" value="Tecnologia" />
+
+            <label for="dura">Duração:</label>
+            <input type="text" id="dura" name="dura" value="6" />
+
+            <label for="formato">Formato:</label>
+            <input type="text" id="formato" name="formato" value="Presencial" />
+
+            <label for="professor">Professor:</label>
+            <input type="text" id="professor" name="professor" value="José Junior Gonçalves" />
+
+            <label for="identificacao">Nº de identificação:</label>
+            <input type="text" id="identificacao" name="identificacao" value="489.069.228-25" />
+
+            <label for="materias">Matérias:</label>
+            <input type="text" id="materias" name="materias" value="Lógica e Algoritmo" />
+
+          
+            <label for="status">Status:</label> 
+            <label class="switch">
+              <input type="checkbox" id="status" checked onchange="ativarCurso(this)" />
+              <span class="slider"></span>
+            </label>
+
+            <br><button type="submit">Salvar edições</button>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
