@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="teladm.css" />
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+        <div class="imagem-container">
+        <img src="Fatec.png" alt="Logo">
+      </div>
+      <br><br>
+      <nav>
+          <ul>
+            <li class="admin-title">Administrador</li>
+            <li class="has-submenu">
+            <a href="telaadm.html">Início</a>
+            </li>
+            <li class="has-submenu">
+             Cursos
+              <ul class="submenu">
+                <li><a href="telacurso.html">Cadastrar</a></li>
+                <li><a href="telaeditarcurso.html">Editar</a></li>
+              </ul>
+            </li>
+          
+            <li class="has-submenu">
+              Usuário
+              <ul class="submenu">
+                <li><a href="telausuario.html">Cadastrar</a></li>
+                <li><a href="telaeditarusuario.html">Editar</a></li>
+                <li></li>
+              </ul>
+            </li>
+            <li class="has-submenu">
+             Projetos
+              <ul class="submenu">
+                <li><a href="projeto.html">Consultar</a></li>
+                <li><a href="telaagenda.html">Agendar</a></li>
+              </ul>
+            </li>
+          </ul>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="actions">
+        <div class="box">
+          <h2>Cadastrar Usuário</h2>
+          <form class="form-curso" id="formCadastroUsuario">
+
+          
+            <label for="tipoUsuario">Tipo de Usuário:</label>
+            <select id="tipoUsuario" name="tipoUsuario" required>
+              <option value="">-- Selecione --</option>
+              <option value="avaliador">Avaliador</option>
+              <option value="professor">Professor</option>
+              <option value="coordenador">Coordenador</option>
+            </select> <br>
+
+            
+            <div id="campos-avaliador" class="campos-especificos" style="display: none;">
+              <label for="nome">Nome:</label>
+              <input type="text" id="nome" name="nome" placeholder="Digite o nome" required>
+              <br><br>
+              <label for="telefone">Telefone:</label>
+              <input type="text" id="telefone" name="telefone" placeholder="Digite o telefone" required>
+            </div>
+
+          
+            <div id="campos-professor" class="campos-especificos" style="display: none;">
+              <label for="nome">Nome:</label>
+              <input type="text" id="nome" name="nome" placeholder="Digite o nome" required>
+              <br><br>
+              <label for="n-matricula">Identificação:</label>
+              <input type="text" id="n-matricula" name="n-matricula" placeholder="Digite o número de identificação" required>
+<br><br>
+              <label for="telefone">Telefone:</label>
+              <input type="text" id="telefone" name="telefone" placeholder="Digite o telefone" required>
+            </div>
+
+        
+            <div id="campos-coordenador" class="campos-especificos" style="display: none;">
+              <label for="nome">Nome:</label>
+              <input type="text" id="nome" name="nome" placeholder="Digite o seu nome" required>
+              <br><br>
+              <label for="email">E-mail:</label>
+              <input type="text" id="email" name="email" placeholder="Digite o seu e-mail" required>
+            </div>
+
+            <br>
+            <button type="submit">Cadastrar Usuário</button>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="telausuario.js"></script>
+</body>
+</html>
