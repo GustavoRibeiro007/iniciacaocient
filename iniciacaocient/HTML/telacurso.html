@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="teladm.css" />
+  <script src="telaadm.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+        <div class="imagem-container">
+        <img src="Fatec.png" alt="Logo">
+      </div>
+      <br><br>
+      <nav>
+        <ul>
+          <li class="admin-title">Administrador</li>
+          <li class="has-submenu"><a href="telaadm.html">Início</a></li>
+
+          <li class="has-submenu">Cursos
+            <ul class="submenu">
+              <li><a href="telacurso.html">Cadastrar</a></li>
+              <li><a href="telaeditarcurso.html">Editar</a></li>
+            </ul>
+          </li>
+
+          <li class="has-submenu">Usuário
+            <ul class="submenu">
+              <li><a href="telausuario.html">Cadastrar</a></li>
+              <li><a href="telaeditarusuario.html">Editar</a></li>
+            </ul>
+          </li>
+
+          <li class="has-submenu">Projetos
+            <ul class="submenu">
+              <li><a href="projeto.html">Consultar</a></li>
+              <li><a href="telaagenda.html">Agendar</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+
+    <main class="main">
+      <div class="actions">
+        <div class="box">
+          <h2>Cadastrar Curso</h2>
+
+          <form class="form-curso">
+            <label for="codigo">Código do curso:</label>
+            <input type="text" id="codigo" name="codigo" readonly />
+
+            <label for="nome">Nome do curso:</label>
+            <input type="text" id="nome" name="nome" required />
+
+            <label for="descricao">Descrição do curso:</label>
+            <input type="text" id="descricao" name="descricao" required />
+
+            <label for="categoria">Categoria:</label>
+            <select id="categoria" name="categoria" required>
+              <option value="">-- Selecione --</option>
+              <option value="tecnologia">Tecnologia</option>
+              <option value="negocios">Negócios</option>
+              <option value="industria">Indústria</option>
+            </select>
+
+           <label for="duracao">Duração (semestre):</label>
+              <select id="duracao" name="duracao" required>
+                <option value="">-- Selecione --</option>
+                <option value="quantidade">1</option>
+                <option value="quantidade">2</option>
+                <option value="quantidade">3</option>
+                <option value="quantidade">4</option>
+                <option value="quantidade">5</option>
+                <option value="quantidade">6</option>
+                <option value="quantidade">7</option>
+                <option value="quantidade">8</option>
+                <option value="quantidade">9</option>
+                <option value="quantidade">10</option>
+                <option value="quantidade">11</option>
+                <option value="quantidade">12</option>
+              </select>
+              
+            <label for="formato">Formato:</label>
+            <select id="formato" name="formato" required>
+              <option value="">-- Selecione --</option>
+              <option value="presencial">Presencial</option>
+              <option value="online">Online</option>
+              <option value="hibrido">Híbrido</option>
+            </select>
+
+            <label>Professores:</label>
+            <div id="professoresContainer">
+              <div class="professor-field">
+                <input type="text" name="professores[]" placeholder="Nome do professor" required />
+                <input type="text" name="ids_professores[]" placeholder="Nº de identificação" required />
+              </div>
+            </div>
+            <button type="button" class="btn-add-professor" onclick="adicionarProfessor()">+ Adicionar professor</button>
+
+            <label for="materias">Matérias:</label>
+            <div id="materiasContainer">
+              <div class="materia-field">
+                <input type="text" name="materias[]" placeholder="Nome da matéria" required />
+                <input type="text" name="ids_materias[]" placeholder="Carga horária" required />
+              </div>
+            </div>
+            <button type="button" class="btn-add-materia" onclick="adicionarMateria()">+ Adicionar matéria</button>
+
+            <br />
+            <button type="submit">Cadastrar curso</button>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
