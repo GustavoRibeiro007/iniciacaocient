@@ -1,41 +1,40 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Projetos</title>
-  <link rel="stylesheet" href="teladm.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-  <script src="telausuario.js" defer></script>
+  <title>Dashboard - Projetos</title>
+  <link rel="stylesheet" href="../css/telaadm.css" />
 </head>
 <body>
   <div class="container">
     <aside class="sidebar">
-        <div class="imagem-container">
-        <img src="Fatec.png" alt="Logo">
+      <div class="imagem-container">
+        <img src="../img/Fatec.png" alt="Logo">
       </div>
       <br><br>
       <nav>
         <ul>
           <li class="admin-title">Administrador</li>
-          <li class="has-submenu"><a href="telaadm.html">Início</a></li>
-
-          <li class="has-submenu">Cursos
+          <li class="has-submenu">
+            <a href="telaadm.html">Início</a>
+          </li>
+          <li class="has-submenu">
+            Cursos
             <ul class="submenu">
               <li><a href="telacurso.html">Cadastrar</a></li>
               <li><a href="telaeditarcurso.html">Editar</a></li>
             </ul>
           </li>
-
-          <li class="has-submenu">Usuário
+          <li class="has-submenu">
+            Usuário
             <ul class="submenu">
               <li><a href="telausuario.html">Cadastrar</a></li>
               <li><a href="telaeditarusuario.html">Editar</a></li>
             </ul>
           </li>
-
-          <li class="has-submenu">Projetos
+          <li class="has-submenu">
+            Projetos
             <ul class="submenu">
               <li><a href="projeto.html">Consultar</a></li>
               <li><a href="telaagenda.html">Agendar</a></li>
@@ -52,54 +51,135 @@
 
           <div class="filtros">
             <select id="filtroCurso">
-              <option value="">Curso</option>
-              <option value="DSM">Desenvolvimento de Software</option>
-              <option value="Gestao">Gestão</option>
+              <option value="">Todos os Cursos</option>
+              <option value="gestao_producao">Gestão da Produção Industrial</option>
+              <option value="gestao_empresarial">Gestão Empresarial</option>
+              <option value="desenvolvimento_soft">Desenvolvimento de Software Multiplataforma</option>
             </select>
 
-            <select id="filtroCategoria">
-              <option value="">Status</option>
-              <option value="pendente">Pendente</option>
-              <option value="aprovado">Aprovado</option>
+            <select id="filtroSemestre">
+              <option value="">Todos os Semestres</option>
+              <option value="1">1º Semestre</option>
+              <option value="2">2º Semestre</option>
+              <option value="3">3º Semestre</option>
+              <option value="4">4º Semestre</option>
+              <option value="5">5º Semestre</option>
+              <option value="6">6º Semestre</option>
             </select>
 
-            <button onclick="aplicarFiltros()">Filtrar</button>
+            <button onclick="filtrarProjetos()">Filtrar</button>
           </div>
 
-          <div class="acoes-exportacao" style="margin-bottom: 15px; display: flex; gap: 10px;">
-            <button onclick="exportarProjetosPDF()">Exportar PDF</button>
-            <button onclick="exportarProjetosCSV()">Exportar Excel (CSV)</button>
+          <div class="projetos-grid" id="projetosContainer">
+            <!-- Os projetos serão inseridos aqui dinamicamente -->
           </div>
+        </div>
+      </div>
 
-          <table id="tabelaProjetos">
-            <thead>
-              <tr>
-                <th>Título</th>
-                <th>Curso</th>
-                <th>Aluno</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-            
-            </tbody>
-          </table>
+      <!-- Modal de Detalhes do Projeto -->
+      <div id="modalDetalhes" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>Detalhes do Projeto</h2>
+          <div id="detalhesConteudo"></div>
         </div>
       </div>
     </main>
   </div>
 
-  <div id="overlay"></div>
-  <div id="detalhesModal">
-    <h3>Detalhes do Projeto</h3>
-    <p><strong>Título:</strong> <span id="detTitulo"></span></p>
-    <p><strong>Resumo:</strong> <span id="detResumo"></span></p>
-    <p><strong>Aluno:</strong> <span id="detAluno"></span></p>
-    <p><strong>Orientador:</strong> <span id="detOrientador"></span></p>
-    <p><strong>Status:</strong> <span id="detStatus"></span></p>
-    <p><strong>Arquivo:</strong> <a id="detArquivo" href="#" target="_blank">Ver</a></p>
-    <button onclick="fecharModal()">Fechar</button>
-  </div>
+  <script>
+    // Função para carregar projetos
+    function carregarProjetos(filtros = {}) {
+      const queryString = Object.keys(filtros)
+        .filter(key => filtros[key])
+        .map(key => `${key}=${encodeURIComponent(filtros[key])}`)
+        .join('&');
+
+      fetch(`../php/projetos.php${queryString ? '?' + queryString : ''}`)
+        .then(response => response.json())
+        .then(projetos => {
+          const container = document.getElementById('projetosContainer');
+          container.innerHTML = '';
+
+          projetos.forEach(projeto => {
+            const card = document.createElement('div');
+            card.className = 'projeto-card';
+            card.innerHTML = `
+              <h3>${projeto.Nome_Projeto}</h3>
+              <p><strong>Curso:</strong> ${projeto.Curso}</p>
+              <p><strong>Semestre:</strong> ${projeto.Semestre}º</p>
+              <p><strong>Orientador:</strong> ${projeto.Orientador}</p>
+              <button onclick="verDetalhes(${projeto.ID})">Ver Detalhes</button>
+            `;
+            container.appendChild(card);
+          });
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    // Função para filtrar projetos
+    function filtrarProjetos() {
+      const curso = document.getElementById('filtroCurso').value;
+      const semestre = document.getElementById('filtroSemestre').value;
+      carregarProjetos({ curso, semestre });
+    }
+
+    // Função para ver detalhes do projeto
+    function verDetalhes(id) {
+      fetch('../php/projetos.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `acao=detalhes&id=${id}`
+      })
+        .then(response => response.json())
+        .then(projeto => {
+          const modal = document.getElementById('modalDetalhes');
+          const conteudo = document.getElementById('detalhesConteudo');
+          
+          conteudo.innerHTML = `
+            <h3>${projeto.Nome_Projeto}</h3>
+            <p><strong>Curso:</strong> ${projeto.Curso}</p>
+            <p><strong>Semestre:</strong> ${projeto.Semestre}º</p>
+            <p><strong>Orientador:</strong> ${projeto.Orientador}</p>
+            <p><strong>Resumo:</strong> ${projeto.Resumo}</p>
+            <p><strong>GitHub:</strong> <a href="${projeto.GitHub_Link}" target="_blank">${projeto.GitHub_Link}</a></p>
+            <p><strong>Arquivo:</strong> <a href="${projeto.Caminho_PDF}" target="_blank">Visualizar PDF</a></p>
+            
+            <h4>Participantes:</h4>
+            <ul>
+              ${projeto.participantes.map(p => `
+                <li>
+                  <strong>${p.Nome}</strong><br>
+                  RA: ${p.RA}<br>
+                  Email: ${p.Email}
+                </li>
+              `).join('')}
+            </ul>
+          `;
+          
+          modal.style.display = "block";
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    // Fechar modal
+    document.querySelector('.close').onclick = function() {
+      document.getElementById('modalDetalhes').style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('modalDetalhes');
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    // Carregar projetos ao iniciar a página
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarProjetos();
+    });
+  </script>
 </body>
 </html>
