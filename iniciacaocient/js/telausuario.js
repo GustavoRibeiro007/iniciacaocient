@@ -1,148 +1,84 @@
 document.addEventListener("DOMContentLoaded", function () {
-  //para mostrar os campos especificos por usuario
+  // Para mostrar os campos específicos por usuário
   const selectTipo = document.getElementById("tipoUsuario");
+  const formCadastroUsuario = document.getElementById("formCadastroUsuario");
+  const botaoSubmit = document.getElementById("botao-submit");
+  const camposAvaliador = document.getElementById('campos-avaliador');
+  const camposProfessor = document.getElementById('campos-professor');
+  const camposCoordenador = document.getElementById('campos-coordenador');
 
   if (selectTipo) {
     selectTipo.addEventListener("change", function () {
       const tipo = selectTipo.value;
 
-      //esconde todos os campos específicos
+      // Esconde todos os campos específicos e limpa os valores
+      camposAvaliador.style.display = 'none';
+      camposProfessor.style.display = 'none';
+      camposCoordenador.style.display = 'none';
       document.querySelectorAll(".campos-especificos").forEach(div => {
         div.style.display = "none";
+        // Limpa os campos do div
+        div.querySelectorAll('input').forEach(input => {
+          input.value = '';
+        });
       });
 
-      //mostra o campo específico correspondente ao tipo de usuário
-      const bloco = document.getElementById("campos-" + tipo);
-      if (bloco) {
-        bloco.style.display = "block";
+      // Esconde o botão de submit se nenhum tipo for selecionado
+      if (!tipo) {
+        botaoSubmit.style.display = "none";
+        return;
       }
+
+      // Mostra o campo específico correspondente ao tipo de usuário
+      if (tipo === 'avaliador') {
+        camposAvaliador.style.display = 'block';
+      } else if (tipo === 'professor') {
+        camposProfessor.style.display = 'block';
+      } else if (tipo === 'coordenador') {
+        camposCoordenador.style.display = 'block';
+      }
+      botaoSubmit.style.display = "block";
     });
   }
 
-  //botão do usuario
-  const formCadastroUsuario = document.getElementById("formCadastroUsuario");
-
+  // Formulário de cadastro de usuário
   if (formCadastroUsuario) {
-    formCadastroUsuario.addEventListener("submit", function (e) {
+    formCadastroUsuario.addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const tipoUsuario = document.getElementById("tipoUsuario").value;
-      const nome = document.getElementById("nome").value;
-
-      let camposEspecificos = {};
-      if (tipoUsuario === "avaliador") {
-        camposEspecificos.cpf = document.getElementById("nome").value;
-        camposEspecificos.endereco = document.getElementById("telefone").value;
-      } else if (tipoUsuario === "professor") {
-         camposEspecificos.cpf = document.getElementById("nome").value;
-        camposEspecificos.matricula = document.getElementById("n-matricula").value;
-        camposEspecificos.setor = document.getElementById("telefone").value;
-      } else if (tipoUsuario === "coordenador") {
-        camposEspecificos.cpf = document.getElementById("nome").value;
-        camposEspecificos.nivelAcesso = document.getElementById("email").value;
+      if (!tipoUsuario) {
+        alert('Por favor, selecione um tipo de usuário.');
+        return;
       }
 
+      const formData = new FormData(this);
+
+      try {
+        const response = await fetch('../php/usuarios.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+        if (data.sucesso) {
+          alert('Usuário cadastrado com sucesso!');
+          // Reseta o formulário
+          this.reset();
+          // Esconde todos os campos específicos
+          document.querySelectorAll(".campos-especificos").forEach(div => {
+            div.style.display = "none";
+          });
+          // Esconde o botão de submit
+          botaoSubmit.style.display = "none";
+          selectTipo.dispatchEvent(new Event('change')); // Reseta a exibição dos campos
+        } else {
+          alert('Erro ao cadastrar usuário: ' + data.erro);
+        }
+      } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao enviar dados: ' + error.message);
+      }
     });
   }
 });
-
- const projetos = [
-      {
-        id: 1,
-        titulo: "Sistema de Gestão Escolar",
-        curso: "DSM",
-        aluno: "João Silva",
-        orientador: "Prof. Carlos",
-        status: "pendente",
-        resumo: "Um sistema web para gerenciar uma escola.",
-        arquivo: "arquivo1.pdf"
-      },
-      {
-        id: 2,
-        titulo: "App de Saúde",
-        curso: "Gestao",
-        aluno: "Maria Oliveira",
-        orientador: "Prof. Ana",
-        status: "aprovado",
-        resumo: "Aplicativo que monitora sinais vitais em tempo real.",
-        arquivo: "arquivo2.pdf"
-      }
-    ];
-
-    function carregarProjetos(lista) {
-      const tbody = document.querySelector("#tabelaProjetos tbody");
-      tbody.innerHTML = "";
-      lista.forEach(p => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${p.titulo}</td>
-          <td>${p.curso}</td>
-          <td>${p.aluno}</td>
-          <td>${p.status}</td>
-          <td><button onclick='verDetalhes(${JSON.stringify(p)})'>Ver detalhes</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function aplicarFiltros() {
-      const curso = document.getElementById("filtroCurso").value;
-      const status = document.getElementById("filtroCategoria").value;
-
-      const filtrados = projetos.filter(p => {
-        return (curso === "" || p.curso === curso) &&
-               (status === "" || p.status === status);
-      });
-
-      carregarProjetos(filtrados);
-    }
-
-    function verDetalhes(projeto) {
-      document.getElementById("detTitulo").innerText = projeto.titulo;
-      document.getElementById("detResumo").innerText = projeto.resumo;
-      document.getElementById("detAluno").innerText = projeto.aluno;
-      document.getElementById("detOrientador").innerText = projeto.orientador;
-      document.getElementById("detStatus").innerText = projeto.status;
-      document.getElementById("detArquivo").href = projeto.arquivo;
-
-      document.getElementById("overlay").style.display = "block";
-      document.getElementById("detalhesModal").style.display = "block";
-    }
-
-    function fecharModal() {
-      document.getElementById("overlay").style.display = "none";
-      document.getElementById("detalhesModal").style.display = "none";
-    }
-
-    function exportarProjetosPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.autoTable({ html: '#tabelaProjetos' });
-      doc.save('projetos.pdf');
-    }
-
-    function exportarProjetosCSV() {
-  const table = document.querySelector('#tabelaProjetos');
-  let csv = '';
-  
-  //loop pelas linhas da tabela
-  for (const row of table.rows) {
-    const cols = Array.from(row.cells).map(col => {
-      // trata casos de dados com vírgulas, aspas e quebras de linha
-      let colText = col.innerText.trim();
-      colText = `"${colText.replace(/"/g, '""')}"`; // Escapa aspas duplas
-      return colText;
-    });
-    csv += cols.join(',') + '\n';
-  }
-
-  //criação do Blob com o conteúdo CSV
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "projetos.csv";
-  link.click();
-}
-    //inicializa a tabela ao carregar a página
-    carregarProjetos(projetos);

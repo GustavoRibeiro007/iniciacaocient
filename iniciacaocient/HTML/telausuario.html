@@ -1,48 +1,44 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard</title>
+  <title>Cadastro de Usuários</title>
   <link rel="stylesheet" href="../css/telaadm.css" />
 </head>
 <body>
   <div class="container">
     <aside class="sidebar">
-        <div class="imagem-container">
+      <div class="imagem-container">
         <img src="../img/Fatec.png" alt="Logo">
       </div>
       <br><br>
       <nav>
-          <ul>
-            <li class="admin-title">Administrador</li>
-            <li class="has-submenu">
-            <a href="telaadm.html">Início</a>
-            </li>
-            <li class="has-submenu">
-             Cursos
-              <ul class="submenu">
-                <li><a href="telacurso.html">Cadastrar</a></li>
-                <li><a href="telaeditarcurso.html">Editar</a></li>
-              </ul>
-            </li>
-          
-            <li class="has-submenu">
-              Usuário
-              <ul class="submenu">
-                <li><a href="telausuario.html">Cadastrar</a></li>
-                <li><a href="telaeditarusuario.html">Editar</a></li>
-                <li></li>
-              </ul>
-            </li>
-            <li class="has-submenu">
-             Projetos
-              <ul class="submenu">
-                <li><a href="projeto.html">Consultar</a></li>
-                <li><a href="telaagenda.html">Agendar</a></li>
-              </ul>
-            </li>
-          </ul>
+        <ul>
+          <li class="admin-title">Administrador</li>
+          <li class="has-submenu"><a href="telaadm.html">Início</a></li>
+
+          <li class="has-submenu">Cursos
+            <ul class="submenu">
+              <li><a href="telacurso.html">Cadastrar</a></li>
+              <li><a href="telaeditarcurso.html">Editar</a></li>
+            </ul>
+          </li>
+
+          <li class="has-submenu">Usuário
+            <ul class="submenu">
+              <li><a href="telausuario.html">Cadastrar</a></li>
+              <li><a href="telaeditarusuario.html">Editar</a></li>
+            </ul>
+          </li>
+
+          <li class="has-submenu">Projetos
+            <ul class="submenu">
+              <li><a href="projeto.html">Consultar</a></li>
+              <li><a href="telaagenda.html">Agendar</a></li>
+            </ul>
+          </li>
+        </ul>
       </nav>
     </aside>
 
@@ -50,8 +46,8 @@
       <div class="actions">
         <div class="box">
           <h2>Cadastrar Usuário</h2>
-          <form class="form-curso" id="formCadastroUsuario">
-
+          <form class="form-curso" id="formCadastroUsuario" method="POST">
+            <input type="hidden" name="acao" value="cadastrar">
           
             <label for="tipoUsuario">Tipo de Usuário:</label>
             <select id="tipoUsuario" name="tipoUsuario" required>
@@ -59,45 +55,56 @@
               <option value="avaliador">Avaliador</option>
               <option value="professor">Professor</option>
               <option value="coordenador">Coordenador</option>
-            </select> <br>
+            </select>
 
-            
             <div id="campos-avaliador" class="campos-especificos" style="display: none;">
-              <label for="nome">Nome:</label>
-              <input type="text" id="nome" name="nome" placeholder="Digite o nome" required>
-              <br><br>
+              <h3>Cadastro de Avaliador</h3>
+              <label for="nome-avaliador">Nome:</label>
+              <input type="text" id="nome-avaliador" name="nome" required placeholder="Digite o nome completo">
+              
               <label for="telefone">Telefone:</label>
-              <input type="text" id="telefone" name="telefone" placeholder="Digite o telefone" required>
+              <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX" required>
             </div>
 
-          
             <div id="campos-professor" class="campos-especificos" style="display: none;">
-              <label for="nome">Nome:</label>
-              <input type="text" id="nome" name="nome" placeholder="Digite o nome" required>
-              <br><br>
-              <label for="n-matricula">Identificação:</label>
-              <input type="text" id="n-matricula" name="n-matricula" placeholder="Digite o número de identificação" required>
-<br><br>
-              <label for="telefone">Telefone:</label>
-              <input type="text" id="telefone" name="telefone" placeholder="Digite o telefone" required>
+              <h3>Cadastro de Professor</h3>
+              <label for="nome-professor">Nome:</label>
+              <input type="text" id="nome-professor" name="nome" required placeholder="Digite o nome completo">
+              
+              <label for="telefone-professor">Telefone:</label>
+              <input type="tel" id="telefone-professor" name="telefone" placeholder="(XX) XXXXX-XXXX" required>
+              
+              <label for="identificacao">Nº de Identificação:</label>
+              <input type="text" id="identificacao" name="n-matricula" placeholder="Digite o número de identificação" required>
             </div>
 
-        
             <div id="campos-coordenador" class="campos-especificos" style="display: none;">
-              <label for="nome">Nome:</label>
-              <input type="text" id="nome" name="nome" placeholder="Digite o seu nome" required>
-              <br><br>
+              <h3>Cadastro de Coordenador</h3>
+              <label for="nome-coordenador">Nome:</label>
+              <input type="text" id="nome-coordenador" name="nome" required placeholder="Digite o nome completo">
+              
               <label for="email">E-mail:</label>
-              <input type="text" id="email" name="email" placeholder="Digite o seu e-mail" required>
+              <input type="email" id="email" name="email" placeholder="exemplo@email.com" required>
             </div>
 
-            <br>
-            <button type="submit">Cadastrar Usuário</button>
+            <div id="botao-submit" style="display: none; margin-top: 20px;">
+              <button type="submit" class="btn-cadastrar">Cadastrar Usuário</button>
+            </div>
           </form>
         </div>
       </div>
     </main>
   </div>
+
+  <script>
+    // Função para debug - mostra os dados que serão enviados
+    function mostrarDadosFormulario(formData) {
+      console.log('Dados do formulário:');
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+      }
+    }
+  </script>
   <script src="../js/telausuario.js"></script>
 </body>
 </html>

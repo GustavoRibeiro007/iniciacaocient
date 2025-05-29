@@ -1,130 +1,184 @@
 <?php
 require_once 'conexao.php';
 
-// Função para cadastrar usuário
-function cadastrarUsuario($tipo, $nome, $identificacao = null, $telefone = null, $email = null) {
-    global $conn;
-    
-    try {
-        $sql = "INSERT INTO usuarios (tipo, nome, identificacao, telefone, email) 
-                VALUES (:tipo, :nome, :identificacao, :telefone, :email)";
-        
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':tipo', $tipo);
-        $stmt->bindParam(':nome', $nome);
-        $stmt->bindParam(':identificacao', $identificacao);
-        $stmt->bindParam(':telefone', $telefone);
-        $stmt->bindParam(':email', $email);
-        
-        return $stmt->execute();
-    } catch(PDOException $e) {
-        return false;
-    }
-}
+header('Content-Type: application/json');
 
-// Função para listar usuários
-function listarUsuarios($tipo = null) {
-    global $conn;
-    
-    try {
-        $sql = "SELECT * FROM usuarios";
-        if ($tipo) {
-            $sql .= " WHERE tipo = :tipo";
-        }
-        
-        $stmt = $conn->prepare($sql);
-        if ($tipo) {
-            $stmt->bindParam(':tipo', $tipo);
-        }
-        
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch(PDOException $e) {
-        return [];
-    }
-}
+try {
+    $acao = $_POST['acao'] ?? $_GET['acao'] ?? '';
+    $pdo = getConexao();
 
-// Função para atualizar usuário
-function atualizarUsuario($id, $dados) {
-    global $conn;
-    
-    try {
-        $campos = [];
-        $valores = [];
-        
-        foreach ($dados as $campo => $valor) {
-            if ($valor !== null) {
-                $campos[] = "$campo = :$campo";
-                $valores[":$campo"] = $valor;
-            }
-        }
-        
-        if (empty($campos)) {
-            return false;
-        }
-        
-        $sql = "UPDATE usuarios SET " . implode(", ", $campos) . " WHERE id = :id";
-        $valores[':id'] = $id;
-        
-        $stmt = $conn->prepare($sql);
-        return $stmt->execute($valores);
-    } catch(PDOException $e) {
-        return false;
-    }
-}
-
-// Função para excluir usuário
-function excluirUsuario($id) {
-    global $conn;
-    
-    try {
-        $sql = "DELETE FROM usuarios WHERE id = :id";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':id', $id);
-        return $stmt->execute();
-    } catch(PDOException $e) {
-        return false;
-    }
-}
-
-// Processar requisições AJAX
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $acao = $_POST['acao'] ?? '';
-    
     switch ($acao) {
         case 'cadastrar':
-            $tipo = $_POST['tipo'] ?? '';
-            $nome = $_POST['nome'] ?? '';
-            $identificacao = $_POST['identificacao'] ?? null;
-            $telefone = $_POST['telefone'] ?? null;
-            $email = $_POST['email'] ?? null;
-            
-            $resultado = cadastrarUsuario($tipo, $nome, $identificacao, $telefone, $email);
-            echo json_encode(['sucesso' => $resultado]);
+            cadastrarUsuario($pdo);
             break;
-            
-        case 'atualizar':
-            $id = $_POST['id'] ?? 0;
-            $dados = [
-                'nome' => $_POST['nome'] ?? null,
-                'identificacao' => $_POST['identificacao'] ?? null,
-                'telefone' => $_POST['telefone'] ?? null,
-                'email' => $_POST['email'] ?? null
-            ];
-            
-            $resultado = atualizarUsuario($id, $dados);
-            echo json_encode(['sucesso' => $resultado]);
+        case 'listar':
+            listarUsuarios($pdo);
             break;
-            
+        case 'editar':
+            editarUsuario($pdo);
+            break;
         case 'excluir':
-            $id = $_POST['id'] ?? 0;
-            $resultado = excluirUsuario($id);
-            echo json_encode(['sucesso' => $resultado]);
+            excluirUsuario($pdo);
             break;
+        case 'buscar':
+            buscarUsuario($pdo);
+            break;
+        default:
+            throw new Exception('Ação não especificada');
     }
-} elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $tipo = $_GET['tipo'] ?? null;
-    $usuarios = listarUsuarios($tipo);
-    echo json_encode($usuarios);
+} catch (Exception $e) {
+    http_response_code(400);
+    echo json_encode(['sucesso' => false, 'erro' => $e->getMessage()]);
+}
+
+function cadastrarUsuario($pdo) {
+    $nome = $_POST['nome'] ?? '';
+    $tipoUsuario = $_POST['tipoUsuario'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $telefone = $_POST['telefone'] ?? '';
+    $identificacao = $_POST['n-matricula'] ?? '';
+
+    // Validações básicas
+    if (empty($nome) || empty($tipoUsuario)) {
+        throw new Exception('Nome e tipo de usuário são obrigatórios');
+    }
+
+    try {
+        $stmt = $pdo->prepare("
+            INSERT INTO Usuarios (
+                Nome, 
+                Email, 
+                Telefone, 
+                Tipo_Usuario, 
+                Identificacao, 
+                Status
+            ) VALUES (?, ?, ?, ?, ?, 'ativo')
+        ");
+        
+        $stmt->execute([
+            $nome,
+            $email,
+            $telefone,
+            $tipoUsuario,
+            $identificacao
+        ]);
+        
+        echo json_encode([
+            'sucesso' => true, 
+            'mensagem' => 'Usuário cadastrado com sucesso',
+            'id' => $pdo->lastInsertId()
+        ]);
+    } catch (PDOException $e) {
+        throw new Exception('Erro ao cadastrar usuário: ' . $e->getMessage());
+    }
+}
+
+function listarUsuarios($pdo) {
+    try {
+        $stmt = $pdo->query("
+            SELECT * FROM Usuarios 
+            WHERE Status = 'ativo' 
+            ORDER BY Nome
+        ");
+        
+        $usuarios = $stmt->fetchAll();
+        echo json_encode(['sucesso' => true, 'usuarios' => $usuarios]);
+    } catch (PDOException $e) {
+        throw new Exception('Erro ao listar usuários: ' . $e->getMessage());
+    }
+}
+
+function editarUsuario($pdo) {
+    $id = $_POST['id'] ?? '';
+    $nome = $_POST['nome'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $telefone = $_POST['telefone'] ?? '';
+    $tipoUsuario = $_POST['tipoUsuario'] ?? '';
+    $identificacao = $_POST['n-matricula'] ?? '';
+
+    if (empty($id) || empty($nome) || empty($tipoUsuario)) {
+        throw new Exception('ID, nome e tipo de usuário são obrigatórios');
+    }
+
+    try {
+        $stmt = $pdo->prepare("
+            UPDATE Usuarios 
+            SET Nome = ?, 
+                Email = ?, 
+                Telefone = ?, 
+                Tipo_Usuario = ?, 
+                Identificacao = ? 
+            WHERE ID = ? AND Status = 'ativo'
+        ");
+        
+        $stmt->execute([
+            $nome,
+            $email,
+            $telefone,
+            $tipoUsuario,
+            $identificacao,
+            $id
+        ]);
+        
+        if ($stmt->rowCount() === 0) {
+            throw new Exception('Usuário não encontrado ou já inativo');
+        }
+        
+        echo json_encode(['sucesso' => true, 'mensagem' => 'Usuário atualizado com sucesso']);
+    } catch (PDOException $e) {
+        throw new Exception('Erro ao atualizar usuário: ' . $e->getMessage());
+    }
+}
+
+function excluirUsuario($pdo) {
+    $id = $_POST['id'] ?? '';
+
+    if (empty($id)) {
+        throw new Exception('ID do usuário é obrigatório');
+    }
+
+    try {
+        $stmt = $pdo->prepare("
+            UPDATE Usuarios 
+            SET Status = 'inativo' 
+            WHERE ID = ? AND Status = 'ativo'
+        ");
+        
+        $stmt->execute([$id]);
+        
+        if ($stmt->rowCount() === 0) {
+            throw new Exception('Usuário não encontrado ou já inativo');
+        }
+        
+        echo json_encode(['sucesso' => true, 'mensagem' => 'Usuário excluído com sucesso']);
+    } catch (PDOException $e) {
+        throw new Exception('Erro ao excluir usuário: ' . $e->getMessage());
+    }
+}
+
+function buscarUsuario($pdo) {
+    $id = $_GET['id'] ?? '';
+
+    if (empty($id)) {
+        throw new Exception('ID do usuário é obrigatório');
+    }
+
+    try {
+        $stmt = $pdo->prepare("
+            SELECT * FROM Usuarios 
+            WHERE ID = ? AND Status = 'ativo'
+        ");
+        
+        $stmt->execute([$id]);
+        $usuario = $stmt->fetch();
+        
+        if (!$usuario) {
+            throw new Exception('Usuário não encontrado');
+        }
+        
+        echo json_encode(['sucesso' => true, 'usuario' => $usuario]);
+    } catch (PDOException $e) {
+        throw new Exception('Erro ao buscar usuário: ' . $e->getMessage());
+    }
 }
 ?> 

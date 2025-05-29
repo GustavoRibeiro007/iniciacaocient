@@ -67,11 +67,26 @@
               <option value="6">6º Semestre</option>
             </select>
 
-            <button onclick="filtrarProjetos()">Filtrar</button>
+            <button onclick="aplicarFiltros()">Filtrar</button>
+            <button onclick="exportarPDF()">Exportar PDF</button>
+            <button onclick="exportarCSV()">Exportar CSV</button>
           </div>
 
-          <div class="projetos-grid" id="projetosContainer">
-            <!-- Os projetos serão inseridos aqui dinamicamente -->
+          <div class="table-container">
+            <table id="tabelaProjetos">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Curso</th>
+                  <th>Orientador</th>
+                  <th>Data de Envio</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Dados serão inseridos aqui dinamicamente -->
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -81,7 +96,17 @@
         <div class="modal-content">
           <span class="close">&times;</span>
           <h2>Detalhes do Projeto</h2>
-          <div id="detalhesConteudo"></div>
+          <div id="detalhesConteudo">
+            <p><strong>Código:</strong> <span id="detalheCodigo"></span></p>
+            <p><strong>Título:</strong> <span id="detalheTitulo"></span></p>
+            <p><strong>Curso:</strong> <span id="detalheCurso"></span></p>
+            <p><strong>Orientador:</strong> <span id="detalheOrientador"></span></p>
+            <p><strong>Resumo:</strong> <span id="detalheResumo"></span></p>
+            <p><strong>GitHub:</strong> <a id="detalheGithub" target="_blank"></a></p>
+            <p><strong>Arquivo:</strong> <a id="detalheArquivo" target="_blank">Visualizar PDF</a></p>
+            <h3>Participantes:</h3>
+            <ul id="detalheParticipantes"></ul>
+          </div>
         </div>
       </div>
     </main>
@@ -89,90 +114,137 @@
 
   <script>
     // Função para carregar projetos
-    function carregarProjetos(filtros = {}) {
-      const queryString = Object.keys(filtros)
-        .filter(key => filtros[key])
-        .map(key => `${key}=${encodeURIComponent(filtros[key])}`)
-        .join('&');
+    async function carregarProjetos(filtros = {}) {
+      try {
+        const queryString = new URLSearchParams(filtros).toString();
+        const response = await fetch(`../php/projetos.php?acao=listar${queryString ? '&' + queryString : ''}`);
+        const data = await response.json();
 
-      fetch(`../php/projetos.php${queryString ? '?' + queryString : ''}`)
-        .then(response => response.json())
-        .then(projetos => {
-          const container = document.getElementById('projetosContainer');
-          container.innerHTML = '';
+        if (data.sucesso) {
+          const tbody = document.querySelector("#tabelaProjetos tbody");
+          tbody.innerHTML = '';
 
-          projetos.forEach(projeto => {
-            const card = document.createElement('div');
-            card.className = 'projeto-card';
-            card.innerHTML = `
-              <h3>${projeto.Nome_Projeto}</h3>
-              <p><strong>Curso:</strong> ${projeto.Curso}</p>
-              <p><strong>Semestre:</strong> ${projeto.Semestre}º</p>
-              <p><strong>Orientador:</strong> ${projeto.Orientador}</p>
-              <button onclick="verDetalhes(${projeto.ID})">Ver Detalhes</button>
+          data.projetos.forEach(projeto => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${projeto.Nome_Projeto}</td>
+              <td>${projeto.Curso}</td>
+              <td>${projeto.Orientador}</td>
+              <td>${new Date(projeto.Data_Envio).toLocaleDateString('pt-BR')}</td>
+              <td>
+                <button onclick="verDetalhes(${projeto.ID})">Ver Detalhes</button>
+                <button onclick="excluirProjeto(${projeto.ID})">Excluir</button>
+              </td>
             `;
-            container.appendChild(card);
+            tbody.appendChild(tr);
           });
-        })
-        .catch(error => console.error('Erro:', error));
+        } else {
+          alert('Erro ao carregar projetos: ' + data.erro);
+        }
+      } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao carregar projetos');
+      }
     }
 
-    // Função para filtrar projetos
-    function filtrarProjetos() {
+    // Função para aplicar filtros
+    function aplicarFiltros() {
       const curso = document.getElementById('filtroCurso').value;
       const semestre = document.getElementById('filtroSemestre').value;
       carregarProjetos({ curso, semestre });
     }
 
     // Função para ver detalhes do projeto
-    function verDetalhes(id) {
-      fetch('../php/projetos.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `acao=detalhes&id=${id}`
-      })
-        .then(response => response.json())
-        .then(projeto => {
-          const modal = document.getElementById('modalDetalhes');
-          const conteudo = document.getElementById('detalhesConteudo');
+    async function verDetalhes(id) {
+      try {
+        const response = await fetch(`../php/projetos.php?acao=detalhes&id=${id}`);
+        const data = await response.json();
+
+        if (data.sucesso) {
+          const projeto = data.projeto;
+          document.getElementById('detalheCodigo').textContent = projeto.ID;
+          document.getElementById('detalheTitulo').textContent = projeto.Nome_Projeto;
+          document.getElementById('detalheCurso').textContent = projeto.Curso;
+          document.getElementById('detalheOrientador').textContent = projeto.Orientador;
+          document.getElementById('detalheResumo').textContent = projeto.Resumo;
           
-          conteudo.innerHTML = `
-            <h3>${projeto.Nome_Projeto}</h3>
-            <p><strong>Curso:</strong> ${projeto.Curso}</p>
-            <p><strong>Semestre:</strong> ${projeto.Semestre}º</p>
-            <p><strong>Orientador:</strong> ${projeto.Orientador}</p>
-            <p><strong>Resumo:</strong> ${projeto.Resumo}</p>
-            <p><strong>GitHub:</strong> <a href="${projeto.GitHub_Link}" target="_blank">${projeto.GitHub_Link}</a></p>
-            <p><strong>Arquivo:</strong> <a href="${projeto.Caminho_PDF}" target="_blank">Visualizar PDF</a></p>
-            
-            <h4>Participantes:</h4>
-            <ul>
-              ${projeto.participantes.map(p => `
-                <li>
-                  <strong>${p.Nome}</strong><br>
-                  RA: ${p.RA}<br>
-                  Email: ${p.Email}
-                </li>
-              `).join('')}
-            </ul>
-          `;
+          const githubLink = document.getElementById('detalheGithub');
+          if (projeto.GitHub_Link) {
+            githubLink.href = projeto.GitHub_Link;
+            githubLink.textContent = projeto.GitHub_Link;
+            githubLink.style.display = 'inline';
+          } else {
+            githubLink.style.display = 'none';
+          }
+
+          document.getElementById('detalheArquivo').href = projeto.Caminho_PDF;
           
-          modal.style.display = "block";
-        })
-        .catch(error => console.error('Erro:', error));
+          const participantesLista = document.getElementById('detalheParticipantes');
+          participantesLista.innerHTML = projeto.participantes.map(p => `
+            <li>
+              <strong>${p.Nome}</strong><br>
+              RA: ${p.RA}<br>
+              Email: ${p.Email}
+            </li>
+          `).join('');
+
+          document.getElementById('modalDetalhes').style.display = 'block';
+        } else {
+          alert('Erro ao carregar detalhes: ' + data.erro);
+        }
+      } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao carregar detalhes do projeto');
+      }
+    }
+
+    // Função para excluir projeto
+    async function excluirProjeto(id) {
+      if (confirm('Tem certeza que deseja excluir este projeto?')) {
+        try {
+          const formData = new FormData();
+          formData.append('acao', 'excluir');
+          formData.append('id', id);
+
+          const response = await fetch('../php/projetos.php', {
+            method: 'POST',
+            body: formData
+          });
+
+          const data = await response.json();
+          if (data.sucesso) {
+            alert('Projeto excluído com sucesso!');
+            carregarProjetos();
+          } else {
+            alert('Erro ao excluir projeto: ' + data.erro);
+          }
+        } catch (error) {
+          console.error('Erro:', error);
+          alert('Erro ao excluir projeto');
+        }
+      }
+    }
+
+    // Função para exportar para PDF
+    function exportarPDF() {
+      window.location.href = '../php/projetos.php?acao=exportar&formato=pdf';
+    }
+
+    // Função para exportar para CSV
+    function exportarCSV() {
+      window.location.href = '../php/projetos.php?acao=exportar&formato=csv';
     }
 
     // Fechar modal
     document.querySelector('.close').onclick = function() {
-      document.getElementById('modalDetalhes').style.display = "none";
+      document.getElementById('modalDetalhes').style.display = 'none';
     }
 
+    // Fechar modal ao clicar fora
     window.onclick = function(event) {
       const modal = document.getElementById('modalDetalhes');
       if (event.target == modal) {
-        modal.style.display = "none";
+        modal.style.display = 'none';
       }
     }
 
