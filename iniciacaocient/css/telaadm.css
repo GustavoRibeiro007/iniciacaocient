@@ -134,41 +134,45 @@ button {
   
   .submenu {
     list-style: none;
-    padding-left: 15px;
-    margin-top: 8px;
+    padding-left: 0;
+    margin: 8px 0 0 0;
     display: none;
-    color: #ffffff;
+    background: #a00000;
+    border-radius: 6px;
+    color: #fff;
+    box-shadow: none;
   }
   
+  .has-submenu.open > .submenu {
+    display: block;
+    position: static;
+  }
+
   .submenu li {
-    padding: 6px 0;
+    padding: 8px 16px;
     font-size: 0.95em;
-    color: #ffffff;
+    color: #ff0000;
     cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .submenu li:last-child {
+    border-bottom: none;
+  }
+
+  .submenu .menu-item {
+    background: transparent;
+    color: #fff;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .submenu .menu-item:hover {
+    background: #b40303;
+    color: #fff;
   }
   
-  .submenu li:hover {
-    color: #ffffff;
-  }
-  
-  /* Aplica a cor desejada para todos os estados dos links */
-a {
-  color: white; /* ou a cor desejada */
-  text-decoration: none;
-}
-
-a:visited {
-  color: white; /* mesma cor do link normal */
-}
-
-a:hover {
-  color: #ddd; /* cor quando o mouse passa por cima */
-}
-
-a:active {
-  color: #ccc; /* cor quando o link está sendo clicado */
-}
-
   /*css usuario*/
   .form-curso {
     margin-top: 20px;
@@ -664,37 +668,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .submenu {
   display: none;
-  position: absolute;
+  position: static;
   left: 100%;
   top: 0;
-  background-color: #fff;
+  background-color: #c30b0b;
   border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   min-width: 200px;
   z-index: 1000;
 }
 
-.has-submenu:hover .submenu {
+.has-submenu.open > .submenu {
   display: block;
-}
-
-.submenu li {
-  padding: 10px 15px;
-  border-bottom: 1px solid #eee;
-}
-
-.submenu li:last-child {
-  border-bottom: none;
-}
-
-.submenu a {
-  color: #333;
-  text-decoration: none;
-  display: block;
-}
-
-.submenu a:hover {
-  color: darkred;
+  position: static;
 }
 
 /* Responsividade */
@@ -722,4 +708,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     display: block;
   }
 }
-  
+
+.menu-item {
+  background: #a00000;
+  color: #fff;
+
+  margin: 2px 0;
+  transition: background 0.2s, color 0.2s;
+}
+.menu-item:hover {
+  background: #b40303;
+  color: #fff;
+}
+

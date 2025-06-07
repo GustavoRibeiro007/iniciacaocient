@@ -14,6 +14,9 @@ try {
         case 'listar':
             listarUsuarios($pdo);
             break;
+        case 'listar_avaliadores':
+            listarAvaliadores($pdo);
+            break;
         case 'editar':
             editarUsuario($pdo);
             break;
@@ -181,4 +184,19 @@ function buscarUsuario($pdo) {
         throw new Exception('Erro ao buscar usuário: ' . $e->getMessage());
     }
 }
-?> 
+
+function listarAvaliadores($pdo) {
+    try {
+        $stmt = $pdo->query("
+            SELECT ID, Nome FROM Usuarios 
+            WHERE Tipo_Usuario = 'avaliador' AND Status = 'ativo' 
+            ORDER BY Nome
+        ");
+        
+        $avaliadores = $stmt->fetchAll();
+        echo json_encode(['sucesso' => true, 'avaliadores' => $avaliadores]);
+    } catch (PDOException $e) {
+        throw new Exception('Erro ao listar avaliadores: ' . $e->getMessage());
+    }
+}
+?>

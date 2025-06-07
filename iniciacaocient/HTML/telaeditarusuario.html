@@ -49,7 +49,6 @@
       <div class="actions">
         <div class="box">
           <h2>Editar Usuário</h2>
-
           <div class="filtros">
             <select id="filtroCategoria">
               <option value="">Tipo</option>
@@ -57,36 +56,165 @@
               <option value="professor">Professor</option>
               <option value="coordenador">Coordenador</option>
             </select>
-            <button onclick="filtrarCursos()">Filtrar</button>
+            <button onclick="filtrarUsuarios()">Filtrar</button>
           </div>
-
-          <!-- Tabela -->
           <table>
             <thead>
               <tr>
-                <th>Código</th>
+                <th>ID</th>
                 <th>Nome</th>
-                <th>Categoria</th>
+                <th>Tipo</th>
+                <th>Email</th>
+                <th>Telefone</th>
                 <th>Ações</th>
               </tr>
             </thead>
-            <tbody id="tabelaCursos">
-              <tr>
-                <td>01</td>
-                <td>Maria José</td>
-                <td>Avaliador</td>
-                <td>
-                  <a href="editarusuario.html">
-                    <button>Editar</button>
-                  </a>
-                </td>
-              </tr>
+            <tbody id="tabelaUsuarios">
+              <!-- Usuários serão carregados via JS -->
             </tbody>
           </table>
         </div>
       </div>
+      <!-- Modal de edição -->
+      <div id="modalEditarUsuario" class="modal" style="display:none;">
+        <div class="modal-content">
+          <span class="close" onclick="fecharModal('modalEditarUsuario')">&times;</span>
+          <h3>Editar Usuário</h3>
+          <form id="formEditarUsuario" onsubmit="event.preventDefault(); salvarEdicaoUsuario();">
+            <input type="hidden" id="editId" name="id">
+            <label for="editNome">Nome:</label>
+            <input type="text" id="editNome" name="nome" required>
+            <label for="editTipoUsuario">Tipo:</label>
+            <select id="editTipoUsuario" name="tipoUsuario" required>
+              <option value="avaliador">Avaliador</option>
+              <option value="professor">Professor</option>
+              <option value="coordenador">Coordenador</option>
+            </select>
+            <label for="editEmail">Email:</label>
+            <input type="email" id="editEmail" name="email">
+            <label for="editTelefone">Telefone:</label>
+            <input type="text" id="editTelefone" name="telefone">
+            <label for="editIdentificacao">Identificação:</label>
+            <input type="text" id="editIdentificacao" name="n-matricula">
+            <button type="submit">Salvar</button>
+          </form>
+        </div>
+      </div>
+      <script>
+        // Função para carregar usuários
+        async function carregarUsuarios(filtro = '') {
+          let url = '../php/usuarios.php?acao=listar';
+          if (filtro) url += '&tipo=' + encodeURIComponent(filtro);
+          try {
+            const response = await fetch(url);
+            const data = await response.json();
+            const tbody = document.getElementById('tabelaUsuarios');
+            tbody.innerHTML = '';
+            if (data.sucesso) {
+              data.usuarios.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                  <td>${u.ID}</td>
+                  <td>${u.Nome}</td>
+                  <td>${u.Tipo_Usuario}</td>
+                  <td>${u.Email || '-'}</td>
+                  <td>${u.Telefone || '-'}</td>
+                  <td>
+                    <button onclick="editarUsuario(${u.ID})">Editar</button>
+                    <button onclick="excluirUsuario(${u.ID})">Excluir</button>
+                  </td>
+                `;
+                tbody.appendChild(tr);
+              });
+            }
+          } catch (error) {
+            alert('Erro ao carregar usuários');
+          }
+        }
+
+        // Filtrar usuários
+        function filtrarUsuarios() {
+          const filtro = document.getElementById('filtroCategoria').value;
+          carregarUsuarios(filtro);
+        }
+
+        // Editar usuário
+        async function editarUsuario(id) {
+          try {
+            const response = await fetch(`../php/usuarios.php?acao=buscar&id=${id}`);
+            const data = await response.json();
+            if (data.sucesso) {
+              const u = data.usuario;
+              document.getElementById('editId').value = u.ID;
+              document.getElementById('editNome').value = u.Nome;
+              document.getElementById('editTipoUsuario').value = u.Tipo_Usuario;
+              document.getElementById('editEmail').value = u.Email || '';
+              document.getElementById('editTelefone').value = u.Telefone || '';
+              document.getElementById('editIdentificacao').value = u.Identificacao || '';
+              document.getElementById('modalEditarUsuario').style.display = 'block';
+            }
+          } catch (error) {
+            alert('Erro ao buscar usuário');
+          }
+        }
+
+        // Salvar edição
+        async function salvarEdicaoUsuario() {
+          const formData = new FormData(document.getElementById('formEditarUsuario'));
+          formData.append('acao', 'editar');
+          try {
+            const response = await fetch('../php/usuarios.php', {
+              method: 'POST',
+              body: formData
+            });
+            const data = await response.json();
+            if (data.sucesso) {
+              alert('Usuário atualizado com sucesso!');
+              document.getElementById('modalEditarUsuario').style.display = 'none';
+              carregarUsuarios();
+            } else {
+              alert('Erro ao atualizar usuário: ' + data.erro);
+            }
+          } catch (error) {
+            alert('Erro ao salvar edição');
+          }
+        }
+
+        // Excluir usuário
+        async function excluirUsuario(id) {
+          if (confirm('Tem certeza que deseja excluir este usuário?')) {
+            const formData = new FormData();
+            formData.append('acao', 'excluir');
+            formData.append('id', id);
+            try {
+              const response = await fetch('../php/usuarios.php', {
+                method: 'POST',
+                body: formData
+              });
+              const data = await response.json();
+              if (data.sucesso) {
+                alert('Usuário excluído com sucesso!');
+                carregarUsuarios();
+              } else {
+                alert('Erro ao excluir usuário: ' + data.erro);
+              }
+            } catch (error) {
+              alert('Erro ao excluir usuário');
+            }
+          }
+        }
+
+        // Fechar modal
+        function fecharModal(id) {
+          document.getElementById(id).style.display = 'none';
+        }
+
+        // Carregar usuários ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+          carregarUsuarios();
+        });
+      </script>
     </main>
   </div>
-  <script src="../js/telaeditarusuario.js"></script>
 </body>
 </html>

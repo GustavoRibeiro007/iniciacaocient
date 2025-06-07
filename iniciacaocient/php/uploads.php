@@ -4,24 +4,23 @@ require_once 'conexao.php';
 header('Content-Type: application/json');
 
 $acao = $_POST['acao'] ?? $_GET['acao'] ?? '';
+$pdo = getConexao();
 
 switch ($acao) {
     case 'upload':
-        realizarUpload();
+        realizarUpload($pdo);
         break;
     case 'listar':
-        listarUploads();
+        listarUploads($pdo);
         break;
     case 'validar':
-        validarUpload();
+        validarUpload($pdo);
         break;
     default:
         echo json_encode(['erro' => 'Ação não especificada']);
 }
 
-function realizarUpload() {
-    global $conn;
-    
+function realizarUpload($pdo) {
     if (!isset($_FILES['arquivo'])) {
         echo json_encode(['erro' => 'Nenhum arquivo enviado']);
         return;
@@ -56,7 +55,7 @@ function realizarUpload() {
     try {
         if (move_uploaded_file($arquivo['tmp_name'], $caminhoCompleto)) {
             // Registrar upload no banco
-            $stmt = $conn->prepare("INSERT INTO Uploads (Nome_Arquivo, Caminho_Arquivo, Tamanho, Validacao) 
+            $stmt = $pdo->prepare("INSERT INTO Uploads (Nome_Arquivo, Caminho_Arquivo, Tamanho, Validacao) 
                                   VALUES (?, ?, ?, 'pendente')");
             
             $stmt->execute([
@@ -65,7 +64,7 @@ function realizarUpload() {
                 $arquivo['size']
             ]);
             
-            $uploadId = $conn->lastInsertId();
+            $uploadId = $pdo->lastInsertId();
             
             echo json_encode([
                 'sucesso' => true,
@@ -85,9 +84,7 @@ function realizarUpload() {
     }
 }
 
-function listarUploads() {
-    global $conn;
-    
+function listarUploads($pdo) {
     $validacao = $_GET['validacao'] ?? '';
     
     try {
@@ -101,7 +98,7 @@ function listarUploads() {
         
         $sql .= " ORDER BY Data_Upload DESC";
         
-        $stmt = $conn->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         $uploads = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
@@ -111,9 +108,7 @@ function listarUploads() {
     }
 }
 
-function validarUpload() {
-    global $conn;
-    
+function validarUpload($pdo) {
     $id = $_POST['id'] ?? '';
     $status = $_POST['status'] ?? '';
     
@@ -123,7 +118,7 @@ function validarUpload() {
     }
     
     try {
-        $stmt = $conn->prepare("UPDATE Uploads SET Validacao = ? WHERE ID = ?");
+        $stmt = $pdo->prepare("UPDATE Uploads SET Validacao = ? WHERE ID = ?");
         $stmt->execute([$status, $id]);
         
         echo json_encode(['sucesso' => true, 'mensagem' => 'Upload validado com sucesso']);
@@ -131,4 +126,4 @@ function validarUpload() {
         echo json_encode(['erro' => 'Erro ao validar upload: ' . $e->getMessage()]);
     }
 }
-?> 
+?>

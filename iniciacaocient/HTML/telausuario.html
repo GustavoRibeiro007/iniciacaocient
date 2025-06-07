@@ -1,110 +1,122 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cadastro de Usuários</title>
-  <link rel="stylesheet" href="../css/telaadm.css" />
-</head>
-<body>
-  <div class="container">
-    <aside class="sidebar">
-      <div class="imagem-container">
-        <img src="../img/Fatec.png" alt="Logo">
-      </div>
-      <br><br>
-      <nav>
-        <ul>
-          <li class="admin-title">Administrador</li>
-          <li class="has-submenu"><a href="telaadm.html">Início</a></li>
+<main class="main">
+  <div class="actions">
+    <div class="box">
+      <h2>Cadastrar Usuário</h2>
+      <form class="form-curso" id="formCadastroUsuario" method="POST" autocomplete="off">
+        <input type="hidden" name="acao" value="cadastrar">
 
-          <li class="has-submenu">Cursos
-            <ul class="submenu">
-              <li><a href="telacurso.html">Cadastrar</a></li>
-              <li><a href="telaeditarcurso.html">Editar</a></li>
-            </ul>
-          </li>
+        <label for="tipoUsuario">Tipo de Usuário:</label>
+        <select id="tipoUsuario" name="tipoUsuario" required>
+          <option value="">-- Selecione --</option>
+          <option value="avaliador">Avaliador</option>
+          <option value="professor">Professor</option>
+          <option value="coordenador">Coordenador</option>
+        </select>
 
-          <li class="has-submenu">Usuário
-            <ul class="submenu">
-              <li><a href="telausuario.html">Cadastrar</a></li>
-              <li><a href="telaeditarusuario.html">Editar</a></li>
-            </ul>
-          </li>
-
-          <li class="has-submenu">Projetos
-            <ul class="submenu">
-              <li><a href="projeto.html">Consultar</a></li>
-              <li><a href="telaagenda.html">Agendar</a></li>
-            </ul>
-          </li>
-        </ul>
-      </nav>
-    </aside>
-
-    <main class="main">
-      <div class="actions">
-        <div class="box">
-          <h2>Cadastrar Usuário</h2>
-          <form class="form-curso" id="formCadastroUsuario" method="POST">
-            <input type="hidden" name="acao" value="cadastrar">
-          
-            <label for="tipoUsuario">Tipo de Usuário:</label>
-            <select id="tipoUsuario" name="tipoUsuario" required>
-              <option value="">-- Selecione --</option>
-              <option value="avaliador">Avaliador</option>
-              <option value="professor">Professor</option>
-              <option value="coordenador">Coordenador</option>
-            </select>
-
-            <div id="campos-avaliador" class="campos-especificos" style="display: none;">
-              <h3>Cadastro de Avaliador</h3>
-              <label for="nome-avaliador">Nome:</label>
-              <input type="text" id="nome-avaliador" name="nome" required placeholder="Digite o nome completo">
-              
-              <label for="telefone">Telefone:</label>
-              <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX" required>
-            </div>
-
-            <div id="campos-professor" class="campos-especificos" style="display: none;">
-              <h3>Cadastro de Professor</h3>
-              <label for="nome-professor">Nome:</label>
-              <input type="text" id="nome-professor" name="nome" required placeholder="Digite o nome completo">
-              
-              <label for="telefone-professor">Telefone:</label>
-              <input type="tel" id="telefone-professor" name="telefone" placeholder="(XX) XXXXX-XXXX" required>
-              
-              <label for="identificacao">Nº de Identificação:</label>
-              <input type="text" id="identificacao" name="n-matricula" placeholder="Digite o número de identificação" required>
-            </div>
-
-            <div id="campos-coordenador" class="campos-especificos" style="display: none;">
-              <h3>Cadastro de Coordenador</h3>
-              <label for="nome-coordenador">Nome:</label>
-              <input type="text" id="nome-coordenador" name="nome" required placeholder="Digite o nome completo">
-              
-              <label for="email">E-mail:</label>
-              <input type="email" id="email" name="email" placeholder="exemplo@email.com" required>
-            </div>
-
-            <div id="botao-submit" style="display: none; margin-top: 20px;">
-              <button type="submit" class="btn-cadastrar">Cadastrar Usuário</button>
-            </div>
-          </form>
+        <div id="campos-avaliador" class="campos-especificos" style="display: none;">
+          <h3>Cadastro de Avaliador</h3>
+          <label for="nome-avaliador">Nome:</label>
+          <input type="text" id="nome-avaliador" name="nome" required placeholder="Digite o nome completo">
+          <label for="telefone">Telefone:</label>
+          <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX" required>
         </div>
-      </div>
-    </main>
-  </div>
 
+        <div id="campos-professor" class="campos-especificos" style="display: none;">
+          <h3>Cadastro de Professor</h3>
+          <label for="nome-professor">Nome:</label>
+          <input type="text" id="nome-professor" name="nome" required placeholder="Digite o nome completo">
+          <label for="telefone-professor">Telefone:</label>
+          <input type="tel" id="telefone-professor" name="telefone" placeholder="(XX) XXXXX-XXXX" required>
+          <label for="identificacao">Nº de Identificação:</label>
+          <input type="text" id="identificacao" name="n-matricula" placeholder="Digite o número de identificação" required>
+        </div>
+
+        <div id="campos-coordenador" class="campos-especificos" style="display: none;">
+          <h3>Cadastro de Coordenador</h3>
+          <label for="nome-coordenador">Nome:</label>
+          <input type="text" id="nome-coordenador" name="nome" required placeholder="Digite o nome completo">
+          <label for="email">E-mail:</label>
+          <input type="email" id="email" name="email" placeholder="exemplo@email.com" required>
+        </div>
+
+        <div id="botao-submit" style="display: none; margin-top: 20px;">
+          <button type="submit" class="btn-cadastrar">Cadastrar Usuário</button>
+        </div>
+        <div id="mensagem-usuario" style="margin-top:15px;"></div>
+      </form>
+    </div>
+  </div>
   <script>
-    // Função para debug - mostra os dados que serão enviados
-    function mostrarDadosFormulario(formData) {
-      console.log('Dados do formulário:');
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
+    (function() {
+      const selectTipo = document.getElementById("tipoUsuario");
+      const formCadastroUsuario = document.getElementById("formCadastroUsuario");
+      const botaoSubmit = document.getElementById("botao-submit");
+      const camposAvaliador = document.getElementById('campos-avaliador');
+      const camposProfessor = document.getElementById('campos-professor');
+      const camposCoordenador = document.getElementById('campos-coordenador');
+      const mensagemUsuario = document.getElementById('mensagem-usuario');
+
+      if (selectTipo) {
+        selectTipo.addEventListener("change", function () {
+          const tipo = selectTipo.value;
+          camposAvaliador.style.display = 'none';
+          camposProfessor.style.display = 'none';
+          camposCoordenador.style.display = 'none';
+          document.querySelectorAll(".campos-especificos").forEach(div => {
+            div.style.display = "none";
+            div.querySelectorAll('input').forEach(input => { input.value = ''; });
+          });
+          if (!tipo) {
+            botaoSubmit.style.display = "none";
+            return;
+          }
+          if (tipo === 'avaliador') {
+            camposAvaliador.style.display = 'block';
+          } else if (tipo === 'professor') {
+            camposProfessor.style.display = 'block';
+          } else if (tipo === 'coordenador') {
+            camposCoordenador.style.display = 'block';
+          }
+          botaoSubmit.style.display = "block";
+        });
       }
-    }
+
+      if (formCadastroUsuario) {
+        formCadastroUsuario.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          mensagemUsuario.textContent = '';
+          const tipoUsuario = document.getElementById("tipoUsuario").value;
+          if (!tipoUsuario) {
+            mensagemUsuario.style.color = 'red';
+            mensagemUsuario.textContent = 'Por favor, selecione um tipo de usuário.';
+            return;
+          }
+          const formData = new FormData(this);
+          try {
+            const response = await fetch('../php/usuarios.php', {
+              method: 'POST',
+              body: formData
+            });
+            const data = await response.json();
+            if (data.sucesso) {
+              mensagemUsuario.style.color = 'green';
+              mensagemUsuario.textContent = 'Usuário cadastrado com sucesso!';
+              this.reset();
+              document.querySelectorAll(".campos-especificos").forEach(div => {
+                div.style.display = "none";
+              });
+              botaoSubmit.style.display = "none";
+              selectTipo.dispatchEvent(new Event('change'));
+            } else {
+              mensagemUsuario.style.color = 'red';
+              mensagemUsuario.textContent = 'Erro ao cadastrar usuário: ' + (data.erro || data.mensagem);
+            }
+          } catch (error) {
+            mensagemUsuario.style.color = 'red';
+            mensagemUsuario.textContent = 'Erro ao enviar dados: ' + error.message;
+          }
+        });
+      }
+    })();
   </script>
-  <script src="../js/telausuario.js"></script>
-</body>
-</html>
+</main>

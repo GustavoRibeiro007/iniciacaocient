@@ -483,3 +483,6 @@ window.onclick = function(event) {
     }
   }
 }
+
+// Remova ou ajuste qualquer código que tente navegar por links ou recarregar a página.
+// Todas as ações devem manipular o DOM dentro do #conteudo-dinamico da telaadm.html SPA.

@@ -10,54 +10,133 @@
 <body>
   <div class="container">
     <aside class="sidebar">
-        <div class="imagem-container">
+      <div class="imagem-container">
         <img src="../img/Fatec.png" alt="Logo">
       </div>
       <br><br>
       <nav>
-          <ul>
-            <li class="admin-title">Administrador</li>
-            <li class="has-submenu">
-            <a href="telaadm.html">Início</a>
-            </li>
-            <li class="has-submenu">
-             Cursos
-              <ul class="submenu">
-                <li><a href="telacurso.html">Cadastrar</a></li>
-                <li><a href="telaeditarcurso.html">Editar</a></li>
-              </ul>
-            </li>
-          
-            <li class="has-submenu">
-              Usuário
-              <ul class="submenu">
-                <li><a href="telausuario.html">Cadastrar</a></li>
-                <li><a href="telaeditarusuario.html">Editar</a></li>
-                <li></li>
-              </ul>
-            </li>
-            <li class="has-submenu">
-             Projetos
-              <ul class="submenu">
-                <li><a href="projeto.html">Consultar</a></li>
-                <li><a href="telaagenda.html">Agendar</a></li>
-              </ul>
-            </li>
-          </ul>
+        <ul>
+          <li class="admin-title">Administrador</li>
+          <li>
+            <span class="menu-item" data-tela="dashboard">Início</span>
+          </li>
+          <li class="has-submenu">
+            <span class="menu-label">Cursos</span>
+            <ul class="submenu">
+              <li><span class="menu-item" data-tela="telacurso">Cadastrar</span></li>
+              <li><span class="menu-item" data-tela="telaeditarcurso">Editar</span></li>
+            </ul>
+          </li>
+          <li class="has-submenu">
+            <span class="menu-label">Usuário</span>
+            <ul class="submenu">
+              <li><span class="menu-item" data-tela="telausuario">Cadastrar</span></li>
+              <li><span class="menu-item" data-tela="telaeditarusuario">Editar</span></li>
+            </ul>
+          </li>
+          <li class="has-submenu">
+            <span class="menu-label">Projetos</span>
+            <ul class="submenu">
+              <li><span class="menu-item" data-tela="projeto">Consultar</span></li>
+              <li><span class="menu-item" data-tela="telaagenda">Agendar</span></li>
+            </ul>
+          </li>
+        </ul>
       </nav>
     </aside>
     <main class="main">
-  <h1>Dashboard</h1>
-  <div class="stats">
-    <div class="card">Projetos Aprovados <strong>12</strong></div>
-    <div class="card">Projetos Pendentes <strong>8</strong></div>
-    <div class="card">Apresentações em correção <strong>4</strong></div>
-    <div class="card">Apresentações agendadas <strong>5</strong></div>
+      <div id="conteudo-dinamico">
+        <!-- Conteúdo das telas será carregado aqui -->
+      </div>
+    </main>
   </div>
-  </div>
-</main>
-  </div>
+  <script>
+    // SPA loader + dropdown logic
+    document.addEventListener('DOMContentLoaded', function() {
+      // Dropdown logic for sidebar
+      document.querySelectorAll('.has-submenu > .menu-label').forEach(label => {
+        label.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const parent = this.parentElement;
+          document.querySelectorAll('.has-submenu').forEach(li => {
+            if (li !== parent) li.classList.remove('open');
+          });
+          parent.classList.toggle('open');
+        });
+      });
 
-  <script src="../js/telaadm.js"></script>
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.sidebar')) {
+          document.querySelectorAll('.has-submenu').forEach(li => li.classList.remove('open'));
+        }
+      });
+
+      // SPA content loader
+      async function carregarTela(tela) {
+        let url = '';
+        switch (tela) {
+          case 'dashboard':
+            document.getElementById('conteudo-dinamico').innerHTML = `
+              <h1>Dashboard</h1>
+              <div class="stats">
+                <div class="card">Projetos Aprovados <strong>12</strong></div>
+                <div class="card">Projetos Pendentes <strong>8</strong></div>
+                <div class="card">Apresentações em correção <strong>4</strong></div>
+                <div class="card">Apresentações agendadas <strong>5</strong></div>
+              </div>
+            `;
+            return;
+          case 'telacurso':
+            url = 'telacurso.html'; break;
+          case 'telaeditarcurso':
+            url = 'telaeditarcurso.html'; break;
+          case 'telausuario':
+            url = 'telausuario.html'; break;
+          case 'telaeditarusuario':
+            url = 'telaeditarusuario.html'; break;
+          case 'projeto':
+            url = 'projeto.html'; break;
+          case 'telaagenda':
+            url = 'telaagenda.html'; break;
+          default:
+            document.getElementById('conteudo-dinamico').innerHTML = '<p>Tela não encontrada.</p>';
+            return;
+        }
+        try {
+          const resp = await fetch(url);
+          const html = await resp.text();
+          const temp = document.createElement('div');
+          temp.innerHTML = html;
+          let mainContent = temp.querySelector('main') || temp.querySelector('.main');
+          if (mainContent) {
+            document.getElementById('conteudo-dinamico').innerHTML = mainContent.innerHTML;
+            // Executa scripts da tela carregada
+            temp.querySelectorAll('script').forEach(script => {
+              const s = document.createElement('script');
+              if (script.src) {
+                s.src = script.src;
+              } else {
+                s.textContent = script.textContent;
+              }
+              document.body.appendChild(s);
+            });
+          } else {
+            document.getElementById('conteudo-dinamico').innerHTML = html;
+          }
+        } catch (e) {
+          document.getElementById('conteudo-dinamico').innerHTML = '<p>Erro ao carregar a tela.</p>';
+        }
+      }
+      // Carregar dashboard por padrão
+      carregarTela('dashboard');
+      // Menu SPA
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.stopPropagation();
+          carregarTela(this.getAttribute('data-tela'));
+        });
+      });
+    });
+  </script>
 </body>
 </html>
