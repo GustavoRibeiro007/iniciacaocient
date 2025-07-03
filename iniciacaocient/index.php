@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="css/form.css">
-    <link rel="stylesheet" type="text/css" href="https://www.cps.sp.gov.br/wp-content/themes/tema-cps/css/sao-paulo/topo-padrao-govsp.min.css">
-    <link rel="stylesheet" type="text/css" href="https://www.cps.sp.gov.br/wp-content/themes/tema-cps/css/sao-paulo/barra-contraste-govsp.min.css">
     <title class="falavel">Inscrição de Projeto Interdisciplinar - P.I</title>
 </head>
 
 <section class="govsp-topo"> 
+        <link rel="stylesheet" type="text/css" href="https://www.cps.sp.gov.br/wp-content/themes/tema-cps/css/sao-paulo/topo-padrao-govsp.min.css">
+        <link rel="stylesheet" type="text/css" href="https://www.cps.sp.gov.br/wp-content/themes/tema-cps/css/sao-paulo/barra-contraste-govsp.min.css">  
         <div id="govsp-topbarGlobal" class="blu-e">
             <div id="topbarGlobal">
                 <div id="topbarLink" class="govsp-black">
                     <div class="govsp-portal">
                         <a href="http://www.saopaulo.sp.gov.br/" target="_blank">
-                            <img width="206" height="38" src="https://www.cps.sp.gov.br/wp-content/themes/tema-cps/images/sao-paulo/logo-governo-do-estado-sp.png" alt="Governo do Estado de São Paulo" class="logo">
+                            <img width="206" height="38" src="https://www.cps.sp.gov.br/wp-content/themes/tema-cps/images/sao-paulo/logo-governo-do-estado-sp.png" alt="Governo do Estado de São Paulo" class="logo entered lazyloaded" data-lazy-src="https://www.cps.sp.gov.br/wp-content/themes/tema-cps/images/sao-paulo/logo-governo-do-estado-sp.png" data-ll-status="loaded"><noscript><img width="206" height="38" src="https://www.cps.sp.gov.br/wp-content/themes/tema-cps/images/sao-paulo/logo-governo-do-estado-sp.png" alt="Governo do Estado de São Paulo" class="logo"></noscript>
                         </a>
                     </div>
                 </div>
@@ -118,9 +118,9 @@
 
     <!-- Barra de Navegação e Busca -->
     <div class="navbar">
-        <a href="index.php" class="nav-link falavel"><i class="fas fa-home"></i> Home</a>
-        <a href="inscricoes.php" class="nav-link falavel"><i class="fas fa-file-alt"></i> Inscrições</a>
-        <a href="feedback.php" class="nav-link falavel"><i class="fas fa-comments"></i> Feedback do Projeto</a>
+        <a href="" class="nav-link falavel"><i class="fas fa-home"></i> Home</a>
+        <a href="" class="nav-link falavel"><i class="fas fa-file-alt"></i> Inscrições</a>
+        <a href="" class="nav-link falavel"><i class="fas fa-comments"></i> Feedback do Projeto</a>
     </div>
     
 </head>
@@ -131,19 +131,11 @@
     <div class="container">
         <h1 class="falavel">Inscrição de Projeto Interdisciplinar - P.I</h1>
 
-        <!-- Botões de Acessibilidade -->
-        <div class="accessibility-controls">
-            <button id="ativarAudio" class="action-btn">
-                <i class="fas fa-volume-up"></i> Ativar áudio
-            </button>
-            <button id="desativarAudio" class="action-btn">
-                <i class="fas fa-volume-mute"></i> Desativar áudio
-            </button>
-        </div>
+        <button id="ativarAudio" class="action-btn">
+            <i class="fas fa-volume-up"></i> Ativar áudio para acessibilidade
+        </button>
 
-        <form action="php/projetos.php" method="POST" enctype="multipart/form-data" class="form-container" id="formProjeto">
-            <input type="hidden" name="acao" value="cadastrar">
-            
+        <form action="php/autenticacao.php" method="POST" enctype="multipart/form-data" class="form-container">
             <div class="form-group">
                 <label for="projectTitle" class="falavel">Título do Projeto:</label>
                 <input type="text" name="projectTitle" id="projectTitle" required class="form-control">
@@ -236,25 +228,14 @@
 
     <script>
         let audioAtivo = false;
-        const btnAtivar = document.getElementById("ativarAudio");
-        const btnDesativar = document.getElementById("desativarAudio");
 
-        btnAtivar.addEventListener("click", () => {
+        document.getElementById("ativarAudio").addEventListener("click", () => {
             audioAtivo = true;
-            btnAtivar.style.display = "none";
-            btnDesativar.style.display = "block";
-            falar("Áudio de acessibilidade ativado");
-        });
-
-        btnDesativar.addEventListener("click", () => {
-            audioAtivo = false;
-            btnAtivar.style.display = "block";
-            btnDesativar.style.display = "none";
-            falar("Áudio de acessibilidade desativado");
+            alert("Áudio ativado! Agora passe o mouse nos textos.");
         });
 
         function falar(texto) {
-            if (!audioAtivo && !texto.includes("desativado")) return;
+            if (!audioAtivo) return;
             const fala = new SpeechSynthesisUtterance(texto);
             fala.lang = "pt-BR";
             speechSynthesis.cancel();
@@ -266,9 +247,6 @@
                 falar(el.textContent);
             });
         });
-
-        // Inicializa o estado dos botões
-        btnDesativar.style.display = "none";
     </script>
 
     <script>
@@ -335,32 +313,5 @@
             alert('Upload de arquivo feito com sucesso!');
         });
     </script>
-
-    <script>
-    document.getElementById('formProjeto').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        
-        fetch('php/projetos.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.sucesso) {
-                alert('Projeto cadastrado com sucesso!');
-                window.location.href = 'HTML/projeto.html';
-            } else {
-                alert('Erro ao cadastrar projeto. Tente novamente.');
-            }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Erro ao cadastrar projeto. Tente novamente.');
-        });
-    });
-    </script>
-
 </body>
 </html>
