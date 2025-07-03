@@ -20,8 +20,11 @@ body {
 
 /* Contêiner para as imagens e barra de navegação */
 .header {
-  text-align: center;
-  margin-bottom: 20px; 
+  width: 100%;
+  margin-bottom: 0;
+  background: darkred; /* opcional: destaque visual */
+  color: #fff;         /* opcional: texto branco */
+  box-sizing: border-box;
 }
 
 /* Centralizando o título abaixo do menu */
@@ -186,4 +189,5 @@ footer {
     text-align: center;
     justify-content: center;
   }
+}
 }

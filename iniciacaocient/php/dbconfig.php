@@ -54,6 +54,19 @@ if ($conn->query($sql) === TRUE) {
         FOREIGN KEY (Formulario_ID) REFERENCES Formularios(ID)
     )";
     $conn->query($sql);
+
+    // Criar tabela Usuarios se não existir
+    $sql = "CREATE TABLE IF NOT EXISTS Usuarios (
+        ID INT PRIMARY KEY AUTO_INCREMENT,
+        Nome VARCHAR(255) NOT NULL,
+        Email VARCHAR(255) NOT NULL UNIQUE,
+        Senha VARCHAR(255) NOT NULL,
+        Telefone VARCHAR(50),
+        Tipo_Usuario ENUM('admin','coordenador','avaliador','usuario') NOT NULL DEFAULT 'usuario',
+        Identificacao VARCHAR(100),
+        Status ENUM('ativo','inativo') NOT NULL DEFAULT 'ativo'
+    )";
+    $conn->query($sql);
 } else {
     die("Erro ao criar banco de dados: " . $conn->error);
 }
