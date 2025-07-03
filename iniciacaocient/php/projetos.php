@@ -29,6 +29,13 @@ try {
             $stmt->execute($params);
             $projetos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+            // Buscar participantes para cada projeto
+            foreach ($projetos as &$projeto) {
+                $stmtPart = $pdo->prepare("SELECT * FROM Participantes WHERE Formulario_ID = ?");
+                $stmtPart->execute([$projeto['ID']]);
+                $projeto['participantes'] = $stmtPart->fetchAll(PDO::FETCH_ASSOC);
+            }
+
             echo json_encode(['sucesso' => true, 'projetos' => $projetos]);
             break;
 

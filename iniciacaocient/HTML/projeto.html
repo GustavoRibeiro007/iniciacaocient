@@ -138,6 +138,10 @@
             `;
             tbody.appendChild(tr);
           });
+
+          // Salva os projetos em window para acesso rápido ao abrir detalhes
+          window._projetosCache = {};
+          data.projetos.forEach(p => window._projetosCache[p.ID] = p);
         } else {
           alert('Erro ao carregar projetos: ' + data.erro);
         }
@@ -156,39 +160,17 @@
 
     // Função para ver detalhes do projeto
     async function verDetalhes(id) {
+      // Tenta usar cache para evitar nova requisição
+      const projeto = window._projetosCache && window._projetosCache[id];
+      if (projeto) {
+        preencherDetalhesProjeto(projeto);
+        return;
+      }
       try {
         const response = await fetch(`../php/projetos.php?acao=detalhes&id=${id}`);
         const data = await response.json();
-
         if (data.sucesso) {
-          const projeto = data.projeto;
-          document.getElementById('detalheCodigo').textContent = projeto.ID;
-          document.getElementById('detalheTitulo').textContent = projeto.Nome_Projeto;
-          document.getElementById('detalheCurso').textContent = projeto.Curso;
-          document.getElementById('detalheOrientador').textContent = projeto.Orientador;
-          document.getElementById('detalheResumo').textContent = projeto.Resumo;
-          
-          const githubLink = document.getElementById('detalheGithub');
-          if (projeto.GitHub_Link) {
-            githubLink.href = projeto.GitHub_Link;
-            githubLink.textContent = projeto.GitHub_Link;
-            githubLink.style.display = 'inline';
-          } else {
-            githubLink.style.display = 'none';
-          }
-
-          document.getElementById('detalheArquivo').href = projeto.Caminho_PDF;
-          
-          const participantesLista = document.getElementById('detalheParticipantes');
-          participantesLista.innerHTML = projeto.participantes.map(p => `
-            <li>
-              <strong>${p.Nome}</strong><br>
-              RA: ${p.RA}<br>
-              Email: ${p.Email}
-            </li>
-          `).join('');
-
-          document.getElementById('modalDetalhes').style.display = 'block';
+          preencherDetalhesProjeto(data.projeto);
         } else {
           alert('Erro ao carregar detalhes: ' + data.erro);
         }
@@ -196,6 +178,40 @@
         console.error('Erro:', error);
         alert('Erro ao carregar detalhes do projeto');
       }
+    }
+
+    function preencherDetalhesProjeto(projeto) {
+      document.getElementById('detalheCodigo').textContent = projeto.ID;
+      document.getElementById('detalheTitulo').textContent = projeto.Nome_Projeto;
+      document.getElementById('detalheCurso').textContent = projeto.Curso;
+      document.getElementById('detalheOrientador').textContent = projeto.Orientador;
+      document.getElementById('detalheResumo').textContent = projeto.Resumo;
+
+      const githubLink = document.getElementById('detalheGithub');
+      if (projeto.GitHub_Link) {
+        githubLink.href = projeto.GitHub_Link;
+        githubLink.textContent = projeto.GitHub_Link;
+        githubLink.style.display = 'inline';
+      } else {
+        githubLink.style.display = 'none';
+      }
+
+      document.getElementById('detalheArquivo').href = projeto.Caminho_PDF;
+
+      const participantesLista = document.getElementById('detalheParticipantes');
+      if (projeto.participantes && projeto.participantes.length > 0) {
+        participantesLista.innerHTML = projeto.participantes.map(p => `
+          <li>
+            <strong>${p.Nome}</strong><br>
+            RA: ${p.RA}<br>
+            Email: ${p.Email}
+          </li>
+        `).join('');
+      } else {
+        participantesLista.innerHTML = '<li>Nenhum participante cadastrado.</li>';
+      }
+
+      document.getElementById('modalDetalhes').style.display = 'block';
     }
 
     // Função para excluir projeto
@@ -248,10 +264,12 @@
       }
     }
 
-    // Carregar projetos ao iniciar a página
+    // Carregar projetos ao iniciar a página (inclusive quando carregado via SPA)
     document.addEventListener('DOMContentLoaded', () => {
       carregarProjetos();
     });
+    // Também carrega ao ser inserido via SPA
+    if (typeof carregarProjetos === 'function') carregarProjetos();
   </script>
 </body>
 </html>

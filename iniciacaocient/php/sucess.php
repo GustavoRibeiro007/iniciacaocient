@@ -30,7 +30,7 @@ session_start();
             <?php else: ?>
                 <p>O arquivo PDF não está disponível para visualização.</p>
             <?php endif; ?>
-            <a href="../index.php" class="back-btn">Voltar para o formulário</a>
+            <a href="../php/form.php" class="back-btn">Voltar para o formulário</a>
         </div>
     </div>
 </body>
