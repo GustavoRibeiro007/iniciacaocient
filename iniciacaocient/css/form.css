@@ -9,45 +9,7 @@
 body {
   background: linear-gradient(to right, #ffffff, #d3d3d3);
   min-height: 100vh;
-  padding: 0;
-}
-
-/* Ajustes para o header do governo */
-.govsp-topo {
-  width: 100%;
-  position: relative;
-  z-index: 1000;
-  background-color: #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-#govsp-topbarGlobal {
-  position: relative !important;
-  width: 100%;
-  max-width: 100%;
-  overflow: visible;
-}
-
-#topbarGlobal {
-  padding: 10px 20px;
-}
-
-.govsp-navbar {
-  display: flex !important;
-  align-items: center !important;
-  flex-wrap: nowrap !important;
-  overflow-x: auto !important;
-  -webkit-overflow-scrolling: touch;
-  margin-right: 50px;
-}
-
-.govsp-navbar::-webkit-scrollbar {
-  display: none;
-}
-
-.govsp-social {
-  white-space: nowrap;
-  margin: 0 5px;
+  padding: 20px;
 }
 
 .container {
@@ -66,7 +28,7 @@ body {
 h1 {
   color: darkred;
   text-align: center;
-  margin: 30px 0;
+  margin-bottom: 30px;
   font-size: 28px;
 }
 
@@ -77,9 +39,7 @@ h1 {
   display: flex;
   justify-content: center;
   gap: 20px;
-  position: relative;
-  z-index: 900;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
 }
 
 .nav-link {
@@ -99,37 +59,6 @@ h1 {
 }
 
 .nav-link i {
-  font-size: 18px;
-}
-
-/* --- BOTÕES DE ACESSIBILIDADE --- */
-.accessibility-controls {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 20px 0;
-}
-
-.action-btn {
-  background-color: darkred;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-}
-
-.action-btn:hover {
-  background-color: #8b0000;
-  transform: translateY(-2px);
-}
-
-.action-btn i {
   font-size: 18px;
 }
 
@@ -185,6 +114,26 @@ label {
   color: darkred;
   margin-bottom: 15px;
   font-size: 18px;
+}
+
+.action-btn {
+  background-color: darkred;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 20px auto;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  background-color: #8b0000;
+  transform: translateY(-2px);
 }
 
 .submit-btn {
