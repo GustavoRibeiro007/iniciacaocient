@@ -54,22 +54,7 @@ if ($conn->query($sql) === TRUE) {
         FOREIGN KEY (Formulario_ID) REFERENCES Formularios(ID)
     )";
     $conn->query($sql);
-
-    // Criar tabela Usuarios se não existir
-    $sql = "CREATE TABLE IF NOT EXISTS Usuarios (
-        ID INT PRIMARY KEY AUTO_INCREMENT,
-        Nome VARCHAR(255) NOT NULL,
-        Email VARCHAR(255),
-        Telefone VARCHAR(50),
-        Tipo_Usuario VARCHAR(50) NOT NULL,
-        Identificacao VARCHAR(100),
-        Status VARCHAR(20) DEFAULT 'ativo'
-    )";
-    $conn->query($sql);
 } else {
     die("Erro ao criar banco de dados: " . $conn->error);
 }
-
-// Use este arquivo apenas para criar o banco e tabelas, não para conexão em produção.
-// Para conexão, use conexao.php com PDO.
 ?>
